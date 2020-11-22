@@ -19,6 +19,8 @@ version: '3.8'
 services:
   db-backup: # backup service
     image: jan-di/database-backup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   database1: # well known database image
     image: mariadb:latest
