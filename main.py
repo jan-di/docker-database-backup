@@ -4,7 +4,12 @@ import subprocess
 import os
 from database import Database, DatabaseType
 
+DOCKER_SOCK = "/var/run/docker.sock"
 LABEL_PREFIX = "jan-di.database-backup."
+
+if not os.path.exists(DOCKER_SOCK):
+    print("ERROR: Docker Socket not found. Socket file must be provided to {}".format(DOCKER_SOCK))
+    exit(1)
 
 client = docker.from_env()
 containers = client.containers.list(
