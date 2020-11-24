@@ -34,5 +34,7 @@ jobs:
         with:
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
           push: true
+          cache-from: type=registry,ref=${{ env.BASE_TAG }}:latest
+          cache-to: type=inline
           tags: |
             ${{ env.BASE_TAG }}:latest
