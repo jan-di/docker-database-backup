@@ -8,6 +8,7 @@ Configure the database containers by specifying labels:
 - `jan-di.database-backup.type` Specify type of database. Possible values: `auto, mysql, mariadb, postgres`. Default: `auto`. Auto tries to get the type from the image name (for specific well known images)
 - `jan-di.database-backup.username` Login user. Default: `root`
 - `jan-di.database-backup.password` Login password
+- `jan-di.database-backup.port` Port (inside container). Default: `3306` (mysql/mariadb), `5432` (postgres)
 
 ## Example
 

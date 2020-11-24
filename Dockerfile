@@ -19,4 +19,6 @@ COPY . .
 RUN set -eux; \
     mkdir -p /dump
 
-ENTRYPOINT [ "python3", "/app/backup.py" ]
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT [ "python3", "/app/main.py" ]
