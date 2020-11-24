@@ -1,5 +1,7 @@
 # docker-database-backup
 
+Docker Image: `ghcr.io/jan-di/database-backup`
+
 ## Configuration
 
 Configure the database containers by specifying labels:
@@ -19,7 +21,7 @@ version: '3.8'
 
 services:
   db-backup: # backup service
-    image: jan-di/database-backup
+    image: ghcr.io/jan-di/database-backup
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
