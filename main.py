@@ -7,11 +7,16 @@ import humanize
 import time
 import sys
 from database import Database, DatabaseType
+from settings import Settings
 
 DOCKER_SOCK = "/var/run/docker.sock"
 LABEL_PREFIX = "jan-di.database-backup."
 
-BACKUP_INTERVAL = int(os.getenv("BACKUP_INTERVAL", 3600))
+settings = Settings(
+    interval=os.getenv("INTERVAL", 3600),
+    defaultUsername=os.getenv('DEFAULT_USERNAME', "root"),
+    defaultPassword=os.getenv("DEFAULT_PASSWORD", "")
+)
 
 if not os.path.exists(DOCKER_SOCK):
     print("ERROR: Docker Socket not found. Socket file must be provided to {}".format(DOCKER_SOCK))
@@ -33,7 +38,7 @@ while True:
         network.connect(ownContainerID)
 
         for i, container in enumerate(containers):
-            database = Database(container)
+            database = Database(container, settings)
 
             print("[{}/{}] Processing container {} {} ({})".format(
                 i + 1, 
@@ -82,10 +87,10 @@ while True:
     else:
         print("No databases to backup")
 
-    if BACKUP_INTERVAL > 0:
-        nextRun = datetime.datetime.now() + datetime.timedelta(seconds=BACKUP_INTERVAL)
+    if settings.interval > 0:
+        nextRun = datetime.datetime.now() + datetime.timedelta(seconds=settings.interval)
         print("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))
 
-        time.sleep(BACKUP_INTERVAL)
+        time.sleep(settings.interval)
     else:
         sys.exit()

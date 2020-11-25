@@ -32,7 +32,7 @@ class Database:
   }
   IMAGE_REGEX = re.compile("^(.+?)(?::.+)?$")
 
-  def __init__(self, container):
+  def __init__(self, container, settings):
     self._container = container
 
     # database type
@@ -54,11 +54,12 @@ class Database:
         self.type = DatabaseType.unknown
 
     defaults = self.DEFAULTS.get(self.type)
+    globalDefaults = settings.defaults
 
     # parameter
     self.port = self._getLabel("port", defaults.port)
-    self.username = self._getLabel("username", "root")
-    self.password = self._getLabel("password", "")
+    self.username = self._getLabel("username", globalDefaults.username)
+    self.password = self._getLabel("password", globalDefaults.password)
 
   def _getLabel(self, key, default):
     return self._container.labels.get("{}{}".format(self.LABEL_PREFIX, key), default)
