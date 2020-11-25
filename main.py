@@ -2,6 +2,7 @@ import docker
 import re 
 import subprocess
 import os
+import humanize
 from database import Database, DatabaseType
 
 DOCKER_SOCK = "/var/run/docker.sock"
@@ -39,10 +40,11 @@ if len(containers):
             print("Cannot read database type. Please specify via label.")
 
         network.connect(container, aliases = ["database-backup-target"])
+        outFile = "/dump/{}_{}.sql".format(container.short_id, container.name)
 
         if database.type == DatabaseType.mysql or database.type == DatabaseType.mariadb:
             try:
-                outFile = "/dump/{}_{}.sql".format(container.short_id, container.name)
+                
                 output = subprocess.check_output(
                     ("mysqldump --host=database-backup-target --user={} --password={}"
                     " --all-databases"
@@ -59,12 +61,14 @@ if len(containers):
                 ).strip()
             except subprocess.CalledProcessError as e:
                 output = str(e.output).strip()
-
-            print("...")
         elif database.type == DatabaseType.postgres:
             print("Not implemented yet ¯\\_(ツ)_/¯")
             
         network.disconnect(container)
+
+        if (os.path.exists(outFile)):
+            size = os.path.getsize(outFile)
+            print("Success. Size: {}".format(humanize.naturalsize(size)))
 
     network.disconnect(ownContainerID)
     network.remove()
