@@ -1,10 +1,18 @@
 # docker-database-backup
 
+A dockerized service to automatically backup all of your database containers.
+
 Docker Image: `ghcr.io/jan-di/database-backup`
 
-## Configuration
+## Service Configuration
 
-Configure the database containers by specifying labels:
+Configure the backup service by specifying environment variables:
+
+- `BACKUP_INTERVAL`. Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup. Default: `3600`
+
+## Database Configuration
+
+Configure each database container by specifying labels:
 
 - `jan-di.database-backup.enable` Enable backup for this container. Default: `false`
 - `jan-di.database-backup.type` Specify type of database. Possible values: `auto, mysql, mariadb, postgres`. Default: `auto`. Auto tries to get the type from the image name (for specific well known images)
@@ -22,6 +30,8 @@ version: '3.8'
 services:
   db-backup: # backup service
     image: ghcr.io/jan-di/database-backup
+    environment:
+      - BACKUP_INTERVAL=600
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
