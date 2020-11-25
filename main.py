@@ -44,7 +44,12 @@ if len(containers):
             try:
                 outFile = "/dump/{}_{}.sql".format(container.short_id, container.name)
                 output = subprocess.check_output(
-                    "mysqldump --host=database-backup-target --user={} --password={} --all-databases > {}".format(
+                    ("mysqldump --host=database-backup-target --user={} --password={}"
+                    " --all-databases"
+                    " --ignore-database=mysql"
+                    " --ignore-database=information_schema"
+                    " --ignore-database=performance_schema"
+                    " > {}").format(
                         database.username, 
                         database.password,
                         outFile),
