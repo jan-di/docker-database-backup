@@ -8,21 +8,25 @@ Docker Image: `ghcr.io/jan-di/database-backup`
 
 Configure the backup service by specifying environment variables:
 
-- `INTERVAL` Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup. Default: `3600`
-- `VERBOSE` More Detailed output. Default: `false`
+Name | Default | Description
+--- | --- | ---
+`INTERVAL` | `3600` | Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup.
+`VERBOSE` | `false` | Increased output
 
-You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`.
+You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`. See next chapter for reference.
 
 ## Database Configuration
 
-Configure each database container by specifying labels:
+Configure each database container by specifying labels. Every label must be prefixed by `jan-di.database-backup.`:
 
-- `jan-di.database-backup.enable` Enable backup for this container. Default: `false`
-- `jan-di.database-backup.type` Specify type of database. Possible values: `auto, mysql, mariadb, postgres`. Default: `auto`. Auto tries to get the type from the image name (for specific well known images)
-- `jan-di.database-backup.username` Login user. Default: `root`
-- `jan-di.database-backup.password` Login password. Default: empty
-- `jan-di.database-backup.port` Port (inside container). Default: `auto`. Auto gets the default port corresponding to the type.
-- `jan-di.database-backup.compress` Compress SQL Dump with gzip. Default: `false`
+Name | Default | Description
+--- | --- | ---
+`enable` | `false` | Enable backup for this container
+`type` | `auto` | Specify type of database. Possible values: `auto, mysql, mariadb, postgres`. Auto tries to get the type from the image name (for specific well known images)
+`username` | `root` | Login user
+`password` | (none) | Login password
+`port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type.
+`compress` | `false` | Compress SQL Dump with gzip
 
 ## Example
 
