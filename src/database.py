@@ -16,11 +16,16 @@ class DatabaseType(Enum):
 KNOWN_IMAGES = {
   # MySQL
   "mysql": DatabaseType.mysql,
+  "bitnami/mysql": DatabaseType.mysql,
+  "mysql/mysql-server": DatabaseType.mysql,
   # MariaDB
   "mariadb": DatabaseType.mariadb,
+  "bitnami/mariadb": DatabaseType.mariadb,
   "linuxserver/mariadb": DatabaseType.mariadb,
+  "mariadb/server": DatabaseType.mariadb,
   # Postgres
-  "postgres": DatabaseType.postgres
+  "postgres": DatabaseType.postgres,
+  "bitnami/postgresql": DatabaseType.postgres,
 }
 
 TYPE_DEFAULTS = {
