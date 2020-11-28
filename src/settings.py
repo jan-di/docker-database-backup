@@ -6,6 +6,8 @@ LABEL_PREFIX = "jan-di.database-backup."
 CONFIG_DEFAULTS = {
     "interval": "3600",
     "verbose": "false",
+    "dump_uid": "0",
+    "dump_gid": "0",
 }
 
 LABEL_DEFAULTS = {
@@ -24,6 +26,9 @@ class Config:
             raise AttributeError("Interval must be positive")
 
         self.verbose = distutils.util.strtobool(values["verbose"])
+
+        self.dump_uid = int(values["dump_uid"])
+        self.dump_gid = int(values["dump_gid"])
 
 def read():
     config_values = {}

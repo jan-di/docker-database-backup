@@ -12,6 +12,8 @@ Name | Default | Description
 --- | --- | ---
 `INTERVAL` | `3600` | Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup.
 `VERBOSE` | `false` | Increased output
+`DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
+`DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
 
 You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`. See next chapter for reference.
 

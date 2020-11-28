@@ -77,9 +77,12 @@ while True:
                 uncompressed_size = os.path.getsize(outFile)
                 if database.compress and uncompressed_size > 0:
                     subprocess.check_output("gzip {}".format(outFile), shell=True)
-                    compressed_size = os.path.getsize(outFile + ".gz")
+                    outFile = outFile + ".gz"
+                    compressed_size = os.path.getsize(outFile)
                 else:
                     database.compress = False
+
+                os.chown(outFile, config.dump_uid, config.dump_gid)
 
                 print("Success. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
 
