@@ -47,7 +47,7 @@ while True:
                 print("Cannot read database type. Please specify via label.")
 
             network.connect(container, aliases = ["database-backup-target"])
-            outFile = "/dump/{}_{}.sql".format(container.short_id, container.name)
+            outFile = "/dump/{}.sql".format(container.name)
 
             if database.type == DatabaseType.mysql or database.type == DatabaseType.mariadb:
                 try:
@@ -76,6 +76,8 @@ while True:
             if (os.path.exists(outFile)):
                 uncompressed_size = os.path.getsize(outFile)
                 if database.compress and uncompressed_size > 0:
+                    if os.path.exists(outFile + ".gz"):
+                        os.remove(outFile + ".gz")
                     subprocess.check_output("gzip {}".format(outFile), shell=True)
                     outFile = outFile + ".gz"
                     compressed_size = os.path.getsize(outFile)
