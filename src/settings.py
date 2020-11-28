@@ -1,9 +1,11 @@
 import os
+import distutils.util
 
 LABEL_PREFIX = "jan-di.database-backup."
 
 CONFIG_DEFAULTS = {
-    "interval": "3600"
+    "interval": "3600",
+    "verbose": "false",
 }
 
 LABEL_DEFAULTS = {
@@ -12,6 +14,7 @@ LABEL_DEFAULTS = {
     "password": "",
     "type": "auto",
     "port": "auto",
+    "compress": "false",
 }
 
 class Config:
@@ -19,6 +22,8 @@ class Config:
         self.interval = int(values["interval"])
         if self.interval < 0:
             raise AttributeError("Interval must be positive")
+
+        self.verbose = distutils.util.strtobool(values["verbose"])
 
 def read():
     config_values = {}

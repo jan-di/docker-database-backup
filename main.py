@@ -14,8 +14,6 @@ from src import docker
 config, global_labels = settings.read()
 docker_client = docker.get_client()
 
-config.verbose = False
-
 while True:
     containers = docker_client.containers.list(
         filters = {
@@ -41,7 +39,9 @@ while True:
             ))
 
             if config.verbose:
-                print("> Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
+                print("VERBOSE: Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
+                if database.compress:
+                    print("VERBOSE: Compressing backup")
 
             if database.type == DatabaseType.unknown:
                 print("Cannot read database type. Please specify via label.")
@@ -74,8 +74,14 @@ while True:
             network.disconnect(container)
 
             if (os.path.exists(outFile)):
-                size = os.path.getsize(outFile)
-                print("Success. Size: {}".format(humanize.naturalsize(size)))
+                uncompressed_size = os.path.getsize(outFile)
+                if database.compress and uncompressed_size > 0:
+                    subprocess.check_output("gzip {}".format(outFile), shell=True)
+                    compressed_size = os.path.getsize(outFile + ".gz")
+                else:
+                    database.compress = False
+
+                print("Success. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
 
         network.disconnect(ownContainerID)
         network.remove()

@@ -1,5 +1,6 @@
 from enum import Enum
 import re
+import distutils.util
 
 import docker
 
@@ -52,6 +53,7 @@ class Database:
     if "port" in values: self.port = values["port"]
     if "username" in values: self.username = values["username"]
     if "password" in values: self.password = values["password"]
+    if "compress" in values: self.compress = values["compress"]
 
   def _get_labels_from_container(self, container):
     labels = {}
@@ -86,3 +88,5 @@ class Database:
       self.port = defaults.get("port")
     else:
       self.port = int(self.port)
+    
+    self.compress = distutils.util.strtobool(self.compress)
