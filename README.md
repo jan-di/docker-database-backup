@@ -22,6 +22,7 @@ Configure each database container by specifying labels:
 - `jan-di.database-backup.username` Login user. Default: `root`
 - `jan-di.database-backup.password` Login password. Default: empty
 - `jan-di.database-backup.port` Port (inside container). Default: `auto`. Auto gets the default port corresponding to the type.
+- `jan-di.database-backup.compress` Compress SQL Dump with gzip. Default: `false`
 
 ## Example
 
