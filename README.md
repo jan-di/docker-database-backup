@@ -14,6 +14,7 @@ Name | Default | Description
 `VERBOSE` | `false` | Increased output
 `DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
+`TZ` | UTC | Time Zone for times in log messages
 
 You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`. See next chapter for reference.
 
@@ -41,6 +42,7 @@ services:
   db-backup: # backup service
     image: ghcr.io/jan-di/database-backup
     environment:
+      - TZ=Europe/Berlin
       - INTERVAL=600
       - GLOBAL_PASSWORD=secret-password
     volumes:

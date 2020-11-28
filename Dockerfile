@@ -3,7 +3,8 @@ FROM python:3.9-alpine
 RUN set -eux; \
     apk --no-cache add \
         mariadb-client \
-        postgresql-client
+        postgresql-client \
+        tzdata
 
 RUN set -eux; \
     pip install pipenv
