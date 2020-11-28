@@ -8,12 +8,9 @@ Docker Image: `ghcr.io/jan-di/database-backup`
 
 Configure the backup service by specifying environment variables:
 
-Settings:
 - `INTERVAL` Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup. Default: `3600`
 
-Defaults:
-- `DEFAULT_USERNAME` Default login username. Default: `root`
-- `DEFAULT_PASSWORD` Default login password. Default: (empty)
+You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable GLOBAL_USERNAME.
 
 ## Database Configuration
 
@@ -21,9 +18,9 @@ Configure each database container by specifying labels:
 
 - `jan-di.database-backup.enable` Enable backup for this container. Default: `false`
 - `jan-di.database-backup.type` Specify type of database. Possible values: `auto, mysql, mariadb, postgres`. Default: `auto`. Auto tries to get the type from the image name (for specific well known images)
-- `jan-di.database-backup.username` Login user. Default: setting `DEFAULT_USERNAME`
-- `jan-di.database-backup.password` Login password. Default: setting `DEFAULT_PASSWORD`
-- `jan-di.database-backup.port` Port (inside container). Default: `3306` (mysql/mariadb), `5432` (postgres)
+- `jan-di.database-backup.username` Login user. Default: `root`
+- `jan-di.database-backup.password` Login password. Default: empty
+- `jan-di.database-backup.port` Port (inside container). Default: `auto`. Auto gets the default port corresponding to the type.
 
 ## Example
 

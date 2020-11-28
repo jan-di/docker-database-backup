@@ -1,44 +1,36 @@
-import docker
 import re 
 import subprocess
 import os
 import datetime
-import humanize
 import time
 import sys
-from database import Database, DatabaseType
-from settings import Settings
 
-DOCKER_SOCK = "/var/run/docker.sock"
-LABEL_PREFIX = "jan-di.database-backup."
+import humanize
 
-settings = Settings(
-    interval=os.getenv("INTERVAL", 3600),
-    defaultUsername=os.getenv('DEFAULT_USERNAME', "root"),
-    defaultPassword=os.getenv("DEFAULT_PASSWORD", "")
-)
+from src.database import Database, DatabaseType
+from src import settings
+from src import docker
 
-if not os.path.exists(DOCKER_SOCK):
-    print("ERROR: Docker Socket not found. Socket file must be provided to {}".format(DOCKER_SOCK))
-    sys.exit(1)
+config, global_labels = settings.read()
+docker_client = docker.get_client()
 
-client = docker.from_env()
+config.verbose = False
 
 while True:
-    containers = client.containers.list(
+    containers = docker_client.containers.list(
         filters = {
-            "label": LABEL_PREFIX + "enable=true"
+            "label": settings.LABEL_PREFIX + "enable=true"
         }
     )
 
     if len(containers):
         ownContainerID = subprocess.check_output("basename $(cat /proc/1/cpuset)", shell=True, text=True).strip()
 
-        network = client.networks.create("docker-database-backup")
+        network = docker_client.networks.create("docker-database-backup")
         network.connect(ownContainerID)
 
         for i, container in enumerate(containers):
-            database = Database(container, settings)
+            database = Database(container, global_labels)
 
             print("[{}/{}] Processing container {} {} ({})".format(
                 i + 1, 
@@ -47,6 +39,9 @@ while True:
                 container.name,
                 database.type.name
             ))
+
+            if config.verbose:
+                print("> Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
 
             if database.type == DatabaseType.unknown:
                 print("Cannot read database type. Please specify via label.")
@@ -87,10 +82,10 @@ while True:
     else:
         print("No databases to backup")
 
-    if settings.interval > 0:
-        nextRun = datetime.datetime.now() + datetime.timedelta(seconds=settings.interval)
+    if config.interval > 0:
+        nextRun = datetime.datetime.now() + datetime.timedelta(seconds=config.interval)
         print("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))
 
-        time.sleep(settings.interval)
+        time.sleep(config.interval)
     else:
         sys.exit()
