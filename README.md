@@ -8,10 +8,10 @@ Docker Image: `ghcr.io/jan-di/database-backup`
 
 Configure the backup service by specifying environment variables:
 
-- `INTERVAL` Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup. Default: `3600`#
+- `INTERVAL` Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup. Default: `3600`
 - `VERBOSE` More Detailed output. Default: `false`
 
-You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable GLOBAL_USERNAME.
+You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`.
 
 ## Database Configuration
 
@@ -36,7 +36,7 @@ services:
     image: ghcr.io/jan-di/database-backup
     environment:
       - INTERVAL=600
-      - DEFAULT_PASSWORD=secret-password
+      - GLOBAL_PASSWORD=secret-password
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
