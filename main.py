@@ -1,4 +1,4 @@
-import re 
+import logging
 import subprocess
 import os
 import datetime
@@ -11,12 +11,18 @@ from src.database import Database, DatabaseType
 from src import settings
 from src import docker
 
+# Read config and setup logging
 config, global_labels = settings.read()
+logging.basicConfig(
+    level=config.loglevel,
+    format='%(asctime)s %(levelname)s %(message)s'
+)
+logging.info("Starting backup service")
+
+# Connecting to docker API
 docker_client = docker.get_client()
 own_container = docker.get_own_container(docker_client)
-
-if config.verbose:
-    print(f"VERBOSE: Own Container ID: {own_container.id}")
+logging.debug(f"Own Container ID: {own_container.id}")
 
 while True:
     containers = docker_client.containers.list(
@@ -27,7 +33,7 @@ while True:
     
     if len(containers):
         successful_containers = 0
-        print(f"Starting backup cycle with {len(containers)} container(s)..")
+        logging.info(f"Starting backup cycle with {len(containers)} container(s)..")
 
         network = docker_client.networks.create("docker-database-backup")
         network.connect(own_container.id)
@@ -35,7 +41,7 @@ while True:
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
 
-            print("[{}/{}] Processing container {} {} ({})".format(
+            logging.info("[{}/{}] Processing container {} {} ({})".format(
                 i + 1, 
                 len(containers), 
                 container.short_id,
@@ -43,13 +49,12 @@ while True:
                 database.type.name
             ))
 
-            if config.verbose:
-                print("VERBOSE: Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
-                if database.compress:
-                    print("VERBOSE: Compressing backup")
+            logging.debug("Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
+            if database.compress:
+                logging.debug("Compressing backup")
 
             if database.type == DatabaseType.unknown:
-                print("Cannot read database type. Please specify via label.")
+                logging.info("Cannot read database type. Please specify via label.")
 
             network.connect(container, aliases = ["database-backup-target"])
             outFile = "/dump/{}.sql".format(container.name)
@@ -94,8 +99,8 @@ while True:
             network.disconnect(container)
 
             if error_code > 0:
-                print(f"FAILED. Return Code: {error_code}; Error Output:")
-                print(f"{error_text}")
+                logging.error(f"FAILED. Return Code: {error_code}; Error Output:")
+                logging.error(f"{error_text}")
             else:
                 if (os.path.exists(outFile)):
                     uncompressed_size = os.path.getsize(outFile)
@@ -111,17 +116,17 @@ while True:
                     os.chown(outFile, config.dump_uid, config.dump_gid) # pylint: disable=maybe-no-member
 
                     successful_containers += 1
-                    print("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
+                    logging.info("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
 
         network.disconnect(own_container.id)
         network.remove()
-        print(f"Finished backup cycle. {successful_containers}/{len(containers)} successful.")
+        logging.info(f"Finished backup cycle. {successful_containers}/{len(containers)} successful.")
     else:
-        print("No databases to backup")
+        logging.info("No databases to backup")
 
     if config.interval > 0:
         nextRun = datetime.datetime.now() + datetime.timedelta(seconds=config.interval)
-        print("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))
+        logging.info("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))
 
         time.sleep(config.interval)
     else:

@@ -1,3 +1,4 @@
+import logging
 import os
 import distutils.util
 
@@ -26,6 +27,7 @@ class Config:
             raise AttributeError("Interval must be positive")
 
         self.verbose = distutils.util.strtobool(values["verbose"])
+        self.loglevel = logging.DEBUG if self.verbose else logging.INFO
 
         self.dump_uid = int(values["dump_uid"])
         self.dump_gid = int(values["dump_gid"])
