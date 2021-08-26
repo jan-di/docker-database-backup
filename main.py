@@ -13,6 +13,10 @@ from src import docker
 
 config, global_labels = settings.read()
 docker_client = docker.get_client()
+own_container = docker.get_own_container(docker_client)
+
+if config.verbose:
+    print(f"VERBOSE: Own Container ID: {own_container.id}")
 
 while True:
     containers = docker_client.containers.list(
@@ -20,15 +24,13 @@ while True:
             "label": settings.LABEL_PREFIX + "enable=true"
         }
     )
-
+    
     if len(containers):
+        successful_containers = 0
         print(f"Starting backup cycle with {len(containers)} container(s)..")
 
-        own_container_id = subprocess.check_output("basename $(cat /proc/1/cpuset)", shell=True, text=True).strip()
-        successful_containers = 0
-
         network = docker_client.networks.create("docker-database-backup")
-        network.connect(own_container_id)
+        network.connect(own_container.id)
 
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
@@ -111,7 +113,7 @@ while True:
                     successful_containers += 1
                     print("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
 
-        network.disconnect(own_container_id)
+        network.disconnect(own_container.id)
         network.remove()
         print(f"Finished backup cycle. {successful_containers}/{len(containers)} successful.")
     else:

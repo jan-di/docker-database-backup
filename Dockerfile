@@ -1,5 +1,10 @@
 FROM python:3.9-alpine
 
+LABEL org.opencontainers.image.ref.name="jan-di/database-backup" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.documentation="https://github.com/jan-di/docker-database-backup/blob/master/README.md" \
+    org.opencontainers.image.source="https://github.com/jan-di/docker-database-backup"
+
 RUN set -eux; \
     apk --no-cache add \
         mariadb-client \
