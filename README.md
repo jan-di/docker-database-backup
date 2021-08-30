@@ -1,4 +1,7 @@
-# docker-database-backup
+# Docker Database Backup
+
+[![](https://img.shields.io/github/workflow/status/jan-di/docker-database-backup/Build%20Docker%20Images?style=flat)](https://github.com/jan-di/docker-database-backup/actions/workflows/build.yml)
+[![](https://img.shields.io/github/license/jan-di/docker-database-backup?style=flat)](https://github.com/jan-di/docker-database-backup/blob/master/LICENSE)
 
 A dockerized service to automatically backup all of your database containers.
 
