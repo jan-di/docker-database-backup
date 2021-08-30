@@ -27,6 +27,7 @@ logging.debug(f"Own Container ID: {own_container.id}")
 while True:
     containers = docker_client.containers.list(
         filters = {
+            "status": "running",
             "label": settings.LABEL_PREFIX + "enable=true"
         }
     )
@@ -54,7 +55,7 @@ while True:
                 logging.debug("Compressing backup")
 
             if database.type == DatabaseType.unknown:
-                logging.info("Cannot read database type. Please specify via label.")
+                logging.error("FAILED: Cannot read database type. Please specify via label.")
 
             network.connect(container, aliases = ["database-backup-target"])
             outFile = "/dump/{}.sql".format(container.name)
