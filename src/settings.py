@@ -9,6 +9,7 @@ CONFIG_DEFAULTS = {
     "verbose": "false",
     "dump_uid": "0",
     "dump_gid": "0",
+    "healthchecks_io_url": None
 }
 
 LABEL_DEFAULTS = {
@@ -31,6 +32,8 @@ class Config:
 
         self.dump_uid = int(values["dump_uid"])
         self.dump_gid = int(values["dump_gid"])
+
+        self.healthchecks_io_url = values["healthchecks_io_url"]
 
 def read():
     config_values = {}

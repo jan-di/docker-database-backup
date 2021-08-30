@@ -8,6 +8,7 @@ import sys
 import humanize
 
 from src.database import Database, DatabaseType
+from src.healthcheck import Healthcheck
 from src import settings
 from src import docker
 
@@ -24,16 +25,25 @@ docker_client = docker.get_client()
 own_container = docker.get_own_container(docker_client)
 logging.debug(f"Own Container ID: {own_container.id}")
 
+# Initializing Healthcheck integrations
+healthcheck = Healthcheck(config)
+
 while True:
+    # Start healthcheck integrations
+    healthcheck.start('Starting backup cycle.')
+
+    # Find available database containers
     containers = docker_client.containers.list(
         filters = {
             "status": "running",
             "label": settings.LABEL_PREFIX + "enable=true"
         }
     )
+
+    container_count = len(containers)
+    successful_count = 0
     
-    if len(containers):
-        successful_containers = 0
+    if container_count:
         logging.info(f"Starting backup cycle with {len(containers)} container(s)..")
 
         network = docker_client.networks.create("docker-database-backup")
@@ -44,7 +54,7 @@ while True:
 
             logging.info("[{}/{}] Processing container {} {} ({})".format(
                 i + 1, 
-                len(containers), 
+                container_count, 
                 container.short_id,
                 container.name,
                 database.type.name
@@ -116,15 +126,27 @@ while True:
 
                     os.chown(outFile, config.dump_uid, config.dump_gid) # pylint: disable=maybe-no-member
 
-                    successful_containers += 1
+                    successful_count += 1
                     logging.info("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
 
         network.disconnect(own_container.id)
         network.remove()
-        logging.info(f"Finished backup cycle. {successful_containers}/{len(containers)} successful.")
+    
+    # Summarize backup cycle
+    full_success = (successful_count == container_count)
+    if container_count == 0:
+        message = "Finished backup cycle. No databases to backup."
+        logging.info(message)
+        healthcheck.success(message)
     else:
-        logging.info("No databases to backup")
+        message = f"Finished backup cycle. {successful_count}/{container_count} successful."
+        logging.info(message)
+        if full_success:
+            healthcheck.success(message)
+        else:
+            healthcheck.fail(message)
 
+    # Scheduling next run
     if config.interval > 0:
         nextRun = datetime.datetime.now() + datetime.timedelta(seconds=config.interval)
         logging.info("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))

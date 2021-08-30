@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 docker = "*"
 humanize = "*"
+requests = "*"
 
 [dev-packages]
 
