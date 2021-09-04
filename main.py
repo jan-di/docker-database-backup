@@ -46,7 +46,7 @@ while True:
     if container_count:
         logging.info(f"Starting backup cycle with {len(containers)} container(s)..")
 
-        network = docker_client.networks.create("docker-database-backup")
+        network = docker_client.networks.create(config.docker_network_name)
         network.connect(own_container.id)
 
         for i, container in enumerate(containers):
@@ -67,8 +67,8 @@ while True:
             if database.type == DatabaseType.unknown:
                 logging.error("FAILED: Cannot read database type. Please specify via label.")
 
-            network.connect(container, aliases = ["database-backup-target"])
-            outFile = "/dump/{}.sql".format(container.name)
+            network.connect(container, aliases = [config.docker_target_name])
+            dumpFile = f"/dump/{container.name}.sql"
             error_code = 0
             error_text = ""
             
@@ -77,15 +77,17 @@ while True:
 
                 if database.type == DatabaseType.mysql or database.type == DatabaseType.mariadb:
                     subprocess.run(
-                        ("mysqldump --host=database-backup-target --user={} --password={}"
-                        " --all-databases"
-                        " --ignore-database=mysql"
-                        " --ignore-database=information_schema"
-                        " --ignore-database=performance_schema"
-                        " > {}").format(
-                            database.username, 
-                            database.password,
-                            outFile),
+                        (
+                            f"mysqldump"
+                            f" --host={config.docker_target_name}"
+                            f" --user={database.username}"
+                            f" --password={database.password}"
+                            f" --all-databases"
+                            f" --ignore-database=mysql"
+                            f" --ignore-database=information_schema"
+                            f" --ignore-database=performance_schema"
+                            f" > {dumpFile}"
+                        ),
                         shell=True,
                         text=True,
                         capture_output=True,
@@ -94,10 +96,12 @@ while True:
                 elif database.type == DatabaseType.postgres:
                     env["PGPASSWORD"] = database.password
                     subprocess.run(
-                        ("pg_dumpall --host=database-backup-target --username={}"
-                        " > {}").format(
-                            database.username, 
-                            outFile),
+                        (
+                            f"pg_dumpall"
+                            f" --host={config.docker_target_name}"
+                            f" --username={database.username}"
+                            f" > {dumpFile}"
+                        ),
                         shell=True,
                         text=True,
                         capture_output=True,
@@ -113,18 +117,18 @@ while True:
                 logging.error(f"FAILED. Return Code: {error_code}; Error Output:")
                 logging.error(f"{error_text}")
             else:
-                if (os.path.exists(outFile)):
-                    uncompressed_size = os.path.getsize(outFile)
+                if (os.path.exists(dumpFile)):
+                    uncompressed_size = os.path.getsize(dumpFile)
                     if database.compress and uncompressed_size > 0:
-                        if os.path.exists(outFile + ".gz"):
-                            os.remove(outFile + ".gz")
-                        subprocess.check_output("gzip {}".format(outFile), shell=True)
-                        outFile = outFile + ".gz"
-                        compressed_size = os.path.getsize(outFile)
+                        if os.path.exists(dumpFile + ".gz"):
+                            os.remove(dumpFile + ".gz")
+                        subprocess.check_output("gzip {}".format(dumpFile), shell=True)
+                        dumpFile = dumpFile + ".gz"
+                        compressed_size = os.path.getsize(dumpFile)
                     else:
                         database.compress = False
 
-                    os.chown(outFile, config.dump_uid, config.dump_gid) # pylint: disable=maybe-no-member
+                    os.chown(dumpFile, config.dump_uid, config.dump_gid) # pylint: disable=maybe-no-member
 
                     successful_count += 1
                     logging.info("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
