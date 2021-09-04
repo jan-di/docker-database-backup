@@ -10,8 +10,8 @@ Dockerized service to automatically backup all of your database containers.
 
 Docker Image Tags:
 
-- `jandi/database-backup` [Docker Hub](https://hub.docker.com/r/jandi/docker-database-backup)
-- `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/docker-database-backup)
+- `jandi/database-backup` [Docker Hub](https://hub.docker.com/r/jandi/database-backup)
+- `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/database-backup)
 
 ## Service Configuration
 
