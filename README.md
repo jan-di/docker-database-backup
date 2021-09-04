@@ -1,11 +1,17 @@
 # Docker Database Backup
 
-[![](https://img.shields.io/github/workflow/status/jan-di/docker-database-backup/Build%20Docker%20Images?style=flat)](https://github.com/jan-di/docker-database-backup/actions/workflows/build.yml)
-[![](https://img.shields.io/github/license/jan-di/docker-database-backup?style=flat)](https://github.com/jan-di/docker-database-backup/blob/master/LICENSE)
+[![Source](https://badgen.net/badge/icon/Source?icon=github&label)](https://github.com/jan-di/docker-database-backup)
+[![Checks](https://badgen.net/github/checks/jan-di/docker-database-backup)](https://github.com/jan-di/docker-database-backup/actions/workflows/build-docker-image.yml)
+[![Release](https://badgen.net/github/release/jan-di/docker-database-backup/stable)](https://github.com/jan-di/docker-database-backup/releases)
+[![Last Commit](https://badgen.net/github/last-commit/jan-di/docker-database-backup/main)](https://github.com/jan-di/docker-database-backup/commits/main)
+[![License](https://badgen.net/github/license/jan-di/docker-database-backup)](https://github.com/jan-di/docker-database-backup/blob/main/LICENSE)
 
-A dockerized service to automatically backup all of your database containers.
+Dockerized service to automatically backup all of your database containers.
 
-Docker Image: `ghcr.io/jan-di/database-backup`
+Docker Image Tags:
+
+- `jandi/database-backup` [Docker Hub](https://hub.docker.com/r/jandi/docker-database-backup)
+- `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/docker-database-backup)
 
 ## Service Configuration
 

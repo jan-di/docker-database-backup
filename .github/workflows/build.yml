@@ -1,12 +1,19 @@
 name: Build Docker Images
 
 env:
-  BASE_TAG: ghcr.io/${{ github.repository_owner }}/database-backup
+  DOCKERHUB_TAG: 'jandi/database-backup'
+  GITHUB_TAG: 'ghcr.io/jan-di/database-backup'
+  PLATFORMS: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
 
 on:
   push:
-    branches:    
-      - master
+    branches:
+      - 'main'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
   multi:
@@ -16,25 +23,50 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Docker Metadata
+        id: docker_meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ${{ env.DOCKERHUB_TAG }}
+            ${{ env.GITHUB_TAG }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+      -
+        name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v1 
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-      -
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          push: true
-          cache-from: type=registry,ref=${{ env.BASE_TAG }}:latest
+          context: .
+          file: ./Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          platforms: ${{ env.PLATFORMS }}
+          cache-from: type=registry,ref=${{ env.GITHUB_TAG }}:main
           cache-to: type=inline
-          tags: |
-            ${{ env.BASE_TAG }}:latest
