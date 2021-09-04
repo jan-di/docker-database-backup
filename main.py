@@ -15,8 +15,7 @@ from src import docker
 # Read config and setup logging
 config, global_labels = settings.read()
 logging.basicConfig(
-    level=config.loglevel,
-    format='%(asctime)s %(levelname)s %(message)s'
+    level=config.loglevel, format="%(asctime)s %(levelname)s %(message)s"
 )
 logging.info("Starting backup service")
 
@@ -30,19 +29,16 @@ healthcheck = Healthcheck(config)
 
 while True:
     # Start healthcheck integrations
-    healthcheck.start('Starting backup cycle.')
+    healthcheck.start("Starting backup cycle.")
 
     # Find available database containers
     containers = docker_client.containers.list(
-        filters = {
-            "status": "running",
-            "label": settings.LABEL_PREFIX + "enable=true"
-        }
+        filters={"status": "running", "label": settings.LABEL_PREFIX + "enable=true"}
     )
 
     container_count = len(containers)
     successful_count = 0
-    
+
     if container_count:
         logging.info(f"Starting backup cycle with {len(containers)} container(s)..")
 
@@ -52,30 +48,43 @@ while True:
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
 
-            logging.info("[{}/{}] Processing container {} {} ({})".format(
-                i + 1, 
-                container_count, 
-                container.short_id,
-                container.name,
-                database.type.name
-            ))
+            logging.info(
+                "[{}/{}] Processing container {} {} ({})".format(
+                    i + 1,
+                    container_count,
+                    container.short_id,
+                    container.name,
+                    database.type.name,
+                )
+            )
 
-            logging.debug("Login {}@host:{} using Password: {}".format(database.username, database.port, "YES" if len(database.password) > 0 else "NO"))
+            logging.debug(
+                "Login {}@host:{} using Password: {}".format(
+                    database.username,
+                    database.port,
+                    "YES" if len(database.password) > 0 else "NO",
+                )
+            )
             if database.compress:
                 logging.debug("Compressing backup")
 
             if database.type == DatabaseType.unknown:
-                logging.error("FAILED: Cannot read database type. Please specify via label.")
+                logging.error(
+                    "FAILED: Cannot read database type. Please specify via label."
+                )
 
-            network.connect(container, aliases = [config.docker_target_name])
+            network.connect(container, aliases=[config.docker_target_name])
             dumpFile = f"/dump/{container.name}.sql"
             error_code = 0
             error_text = ""
-            
+
             try:
                 env = os.environ.copy()
 
-                if database.type == DatabaseType.mysql or database.type == DatabaseType.mariadb:
+                if (
+                    database.type == DatabaseType.mysql
+                    or database.type == DatabaseType.mariadb
+                ):
                     subprocess.run(
                         (
                             f"mysqldump"
@@ -105,11 +114,11 @@ while True:
                         shell=True,
                         text=True,
                         capture_output=True,
-                        env=env
+                        env=env,
                     ).check_returncode()
             except subprocess.CalledProcessError as e:
                 error_code = e.returncode
-                error_text = f"\n{e.stderr.strip()}".replace('\n', '\n> ').strip()
+                error_text = f"\n{e.stderr.strip()}".replace("\n", "\n> ").strip()
 
             network.disconnect(container)
 
@@ -117,7 +126,7 @@ while True:
                 logging.error(f"FAILED. Return Code: {error_code}; Error Output:")
                 logging.error(f"{error_text}")
             else:
-                if (os.path.exists(dumpFile)):
+                if os.path.exists(dumpFile):
                     uncompressed_size = os.path.getsize(dumpFile)
                     if database.compress and uncompressed_size > 0:
                         if os.path.exists(dumpFile + ".gz"):
@@ -128,22 +137,35 @@ while True:
                     else:
                         database.compress = False
 
-                    os.chown(dumpFile, config.dump_uid, config.dump_gid) # pylint: disable=maybe-no-member
+                    os.chown(
+                        dumpFile, config.dump_uid, config.dump_gid
+                    )  # pylint: disable=maybe-no-member
 
                     successful_count += 1
-                    logging.info("SUCCESS. Size: {}{}".format(humanize.naturalsize(uncompressed_size), " (" + humanize.naturalsize(compressed_size) + " compressed)" if database.compress else ""))
+                    logging.info(
+                        "SUCCESS. Size: {}{}".format(
+                            humanize.naturalsize(uncompressed_size),
+                            " ("
+                            + humanize.naturalsize(compressed_size)
+                            + " compressed)"
+                            if database.compress
+                            else "",
+                        )
+                    )
 
         network.disconnect(own_container.id)
         network.remove()
-    
+
     # Summarize backup cycle
-    full_success = (successful_count == container_count)
+    full_success = successful_count == container_count
     if container_count == 0:
         message = "Finished backup cycle. No databases to backup."
         logging.info(message)
         healthcheck.success(message)
     else:
-        message = f"Finished backup cycle. {successful_count}/{container_count} successful."
+        message = (
+            f"Finished backup cycle. {successful_count}/{container_count} successful."
+        )
         logging.info(message)
         if full_success:
             healthcheck.success(message)
@@ -153,7 +175,9 @@ while True:
     # Scheduling next run
     if config.interval > 0:
         nextRun = datetime.datetime.now() + datetime.timedelta(seconds=config.interval)
-        logging.info("Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S")))
+        logging.info(
+            "Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S"))
+        )
 
         time.sleep(config.interval)
     else:
