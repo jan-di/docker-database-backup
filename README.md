@@ -42,6 +42,7 @@ Name | Default | Description
 `password` | (none) | Login password
 `port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type.
 `compress` | `false` | Compress SQL Dump with gzip
+`compression_level` | `6` | Gzip compression level (1-9)
 
 ## Example
 

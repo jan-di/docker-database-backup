@@ -125,33 +125,37 @@ while True:
             if error_code > 0:
                 logging.error(f"FAILED. Return Code: {error_code}; Error Output:")
                 logging.error(f"{error_text}")
-            else:
-                if os.path.exists(dumpFile):
-                    uncompressed_size = os.path.getsize(dumpFile)
-                    if database.compress and uncompressed_size > 0:
-                        if os.path.exists(dumpFile + ".gz"):
-                            os.remove(dumpFile + ".gz")
-                        subprocess.check_output("gzip {}".format(dumpFile), shell=True)
-                        dumpFile = dumpFile + ".gz"
-                        compressed_size = os.path.getsize(dumpFile)
-                    else:
-                        database.compress = False
+            elif os.path.exists(dumpFile):
+                dump_size = os.path.getsize(dumpFile)
 
-                    os.chown(
-                        dumpFile, config.dump_uid, config.dump_gid
-                    )  # pylint: disable=maybe-no-member
-
-                    successful_count += 1
-                    logging.info(
-                        "SUCCESS. Size: {}{}".format(
-                            humanize.naturalsize(uncompressed_size),
-                            " ("
-                            + humanize.naturalsize(compressed_size)
-                            + " compressed)"
-                            if database.compress
-                            else "",
-                        )
+                # Compress pump
+                if database.compress and dump_size > 0:
+                    if os.path.exists(dumpFile + ".gz"):
+                        os.remove(dumpFile + ".gz")
+                    subprocess.check_output(
+                        f'gzip -{database.compression_level} "{dumpFile}"', shell=True
                     )
+                    dumpFile = dumpFile + ".gz"
+                    compressed_size = os.path.getsize(dumpFile)
+                else:
+                    database.compress = False
+
+                # Change Owner of dump
+                os.chown(
+                    dumpFile, config.dump_uid, config.dump_gid
+                )  # pylint: disable=maybe-no-member
+
+                successful_count += 1
+                logging.info(
+                    "SUCCESS. Size: {}{}".format(
+                        humanize.naturalsize(dump_size),
+                        " (" + humanize.naturalsize(compressed_size) + " compressed)"
+                        if database.compress
+                        else "",
+                    )
+                )
+            else:
+                logging.error("Dump file not found!")
 
         network.disconnect(own_container.id)
         network.remove()

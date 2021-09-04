@@ -2,8 +2,6 @@ from enum import Enum
 import re
 import distutils.util
 
-import docker
-
 from . import settings
 
 class DatabaseType(Enum):
@@ -59,6 +57,7 @@ class Database:
     if "username" in values: self.username = values["username"]
     if "password" in values: self.password = values["password"]
     if "compress" in values: self.compress = values["compress"]
+    if "compression_level" in values: self.compression_level = values["compression_level"]
 
   def _get_labels_from_container(self, container):
     labels = {}
