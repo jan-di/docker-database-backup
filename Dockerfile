@@ -18,8 +18,14 @@ ENV PIPENV_VENV_IN_PROJECT=1 \
     CI=1
 
 RUN set -eux; \
+	apt-get update; \
+    apt-get upgrade -qq -o=Dpkg::Use-Pty=0 -y --with-new-pkgs; \
+	apt-get install -qq -o=Dpkg::Use-Pty=0 -y --no-install-recommends \
+		 build-essential libssl-dev libffi-dev python3-dev cargo \
+	; \
+	rm -rf /var/lib/apt/lists/*; \
     pip install pipenv
-
+    
 COPY Pipfile Pipfile.lock ./
 RUN set -eux; \
     pipenv install --deploy
