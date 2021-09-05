@@ -87,15 +87,15 @@ while True:
                 ):
                     subprocess.run(
                         (
-                            f"mysqldump"
-                            f" --host={config.docker_target_name}"
-                            f" --user={database.username}"
-                            f" --password={database.password}"
-                            f" --all-databases"
-                            f" --ignore-database=mysql"
-                            f" --ignore-database=information_schema"
-                            f" --ignore-database=performance_schema"
-                            f" > {dump_file}"
+                            f'mysqldump'
+                            f' --host="{config.docker_target_name}"'
+                            f' --user="{database.username}"'
+                            f' --password="{database.password}"'
+                            f' --all-databases'
+                            f' --ignore-database=mysql'
+                            f' --ignore-database=information_schema'
+                            f' --ignore-database=performance_schema'
+                            f' > "{dump_file}"'
                         ),
                         shell=True,
                         text=True,
@@ -106,10 +106,10 @@ while True:
                     env["PGPASSWORD"] = database.password
                     subprocess.run(
                         (
-                            f"pg_dumpall"
-                            f" --host={config.docker_target_name}"
-                            f" --username={database.username}"
-                            f" > {dump_file}"
+                            f'pg_dumpall'
+                            f' --host="{config.docker_target_name}"'
+                            f' --username="{database.username}"'
+                            f' > "{dump_file}"'
                         ),
                         shell=True,
                         text=True,
