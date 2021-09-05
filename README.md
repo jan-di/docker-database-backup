@@ -43,6 +43,8 @@ Name | Default | Description
 `port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type.
 `compress` | `false` | Compress SQL Dump with gzip
 `compression_level` | `6` | Gzip compression level (1-9)
+`encrypt` | `false` | Encrypt SQL Dump with AES
+`encryption_key` | (none) | Key/Passphrase used to encrypt
 
 ## Example
 

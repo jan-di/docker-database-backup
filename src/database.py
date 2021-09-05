@@ -56,8 +56,10 @@ class Database:
     if "port" in values: self.port = values["port"]
     if "username" in values: self.username = values["username"]
     if "password" in values: self.password = values["password"]
-    if "compress" in values: self.compress = values["compress"]
+    if "compress" in values: self.compress = distutils.util.strtobool(values["compress"])
     if "compression_level" in values: self.compression_level = values["compression_level"]
+    if "encrypt" in values: self.encrypt = distutils.util.strtobool(values["encrypt"])
+    if "encryption_key" in values: self.encryption_key = values["encryption_key"]
 
   def _get_labels_from_container(self, container):
     labels = {}
@@ -92,5 +94,4 @@ class Database:
       self.port = defaults.get("port")
     else:
       self.port = int(self.port)
-    
-    self.compress = distutils.util.strtobool(self.compress)
+

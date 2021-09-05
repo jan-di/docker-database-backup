@@ -21,7 +21,9 @@ LABEL_DEFAULTS = {
     "type": "auto",
     "port": "auto",
     "compress": "false",
-    "compression_level": 6
+    "compression_level": 6,
+    "encrypt": "true",
+    "encryption_key": None
 }
 
 class Config:

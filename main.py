@@ -5,6 +5,7 @@ import datetime
 import time
 import sys
 
+import pyAesCrypt
 import humanize
 
 from src.database import Database, DatabaseType
@@ -47,6 +48,8 @@ while True:
 
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
+            dump_file = f"/dump/{container.name}.sql"
+            failed = False
 
             logging.info(
                 "[{}/{}] Processing container {} {} ({})".format(
@@ -58,6 +61,12 @@ while True:
                 )
             )
 
+            if database.type == DatabaseType.unknown:
+                logging.error(
+                    "FAILED: Cannot read database type. Please specify via label."
+                )
+                failed = True
+
             logging.debug(
                 "Login {}@host:{} using Password: {}".format(
                     database.username,
@@ -65,18 +74,9 @@ while True:
                     "YES" if len(database.password) > 0 else "NO",
                 )
             )
-            if database.compress:
-                logging.debug("Compressing backup")
 
-            if database.type == DatabaseType.unknown:
-                logging.error(
-                    "FAILED: Cannot read database type. Please specify via label."
-                )
-
+            # Create dump
             network.connect(container, aliases=[config.docker_target_name])
-            dumpFile = f"/dump/{container.name}.sql"
-            error_code = 0
-            error_text = ""
 
             try:
                 env = os.environ.copy()
@@ -95,7 +95,7 @@ while True:
                             f" --ignore-database=mysql"
                             f" --ignore-database=information_schema"
                             f" --ignore-database=performance_schema"
-                            f" > {dumpFile}"
+                            f" > {dump_file}"
                         ),
                         shell=True,
                         text=True,
@@ -109,7 +109,7 @@ while True:
                             f"pg_dumpall"
                             f" --host={config.docker_target_name}"
                             f" --username={database.username}"
-                            f" > {dumpFile}"
+                            f" > {dump_file}"
                         ),
                         shell=True,
                         text=True,
@@ -117,45 +117,84 @@ while True:
                         env=env,
                     ).check_returncode()
             except subprocess.CalledProcessError as e:
-                error_code = e.returncode
                 error_text = f"\n{e.stderr.strip()}".replace("\n", "\n> ").strip()
+                logging.error(
+                    f"FAILED. Error while crating dump. Return Code: {e.returncode}; Error Output:"
+                )
+                logging.error(f"{error_text}")
+                failed = True
+
+            if not failed and not os.path.exists(dump_file):
+                logging.error(
+                    f"FAILED: Dump cannot be created due to an unknown error!"
+                )
+                failed = True
 
             network.disconnect(container)
 
-            if error_code > 0:
-                logging.error(f"FAILED. Return Code: {error_code}; Error Output:")
-                logging.error(f"{error_text}")
-            elif os.path.exists(dumpFile):
-                dump_size = os.path.getsize(dumpFile)
+            dump_size = os.path.getsize(dump_file)
 
-                # Compress pump
-                if database.compress and dump_size > 0:
-                    if os.path.exists(dumpFile + ".gz"):
-                        os.remove(dumpFile + ".gz")
+            # Compress pump
+            if not failed and database.compress and dump_size > 0:
+                logging.debug(f"Compressing dump (level: {database.compression_level})")
+                compressed_dump_file = f"{dump_file}.gz"
+
+                try:
+                    if os.path.exists(compressed_dump_file):
+                        os.remove(compressed_dump_file)
+
                     subprocess.check_output(
-                        f'gzip -{database.compression_level} "{dumpFile}"', shell=True
+                        f'gzip -{database.compression_level} "{dump_file}"', shell=True
                     )
-                    dumpFile = dumpFile + ".gz"
-                    compressed_size = os.path.getsize(dumpFile)
-                else:
-                    database.compress = False
+                except Exception as e:
+                    logging.error(f"FAILED: Error while compressing: {e}")
+                    failed = True
 
+                processed_dump_size = os.path.getsize(compressed_dump_file)
+                dump_file = compressed_dump_file
+            else:
+                database.compress = False
+
+            # Encrypt dump
+            if not failed and database.encrypt and dump_size > 0:
+                logging.debug(f"Encrypting dump")
+                encrypted_dump_file = f"{dump_file}.aes"
+
+                try:
+                    if os.path.exists(encrypted_dump_file):
+                        os.remove(encrypted_dump_file)
+
+                    pyAesCrypt.encryptFile(
+                        dump_file, encrypted_dump_file, database.encryption_key
+                    )
+                    os.remove(dump_file)
+                except Exception as e:
+                    logging.error(f"FAILED: Error while encrypting: {e}")
+                    failed = True
+
+                processed_dump_size = os.path.getsize(encrypted_dump_file)
+                dump_file = encrypted_dump_file
+
+            else:
+                database.encrypt = False
+
+            if not failed:
                 # Change Owner of dump
                 os.chown(
-                    dumpFile, config.dump_uid, config.dump_gid
+                    dump_file, config.dump_uid, config.dump_gid
                 )  # pylint: disable=maybe-no-member
 
                 successful_count += 1
                 logging.info(
                     "SUCCESS. Size: {}{}".format(
                         humanize.naturalsize(dump_size),
-                        " (" + humanize.naturalsize(compressed_size) + " compressed)"
-                        if database.compress
+                        " ("
+                        + humanize.naturalsize(processed_dump_size)
+                        + " compressed/encrypted)"
+                        if database.compress or database.encrypt
                         else "",
                     )
                 )
-            else:
-                logging.error("Dump file not found!")
 
         network.disconnect(own_container.id)
         network.remove()

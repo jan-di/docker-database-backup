@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.9-alpine AS base
 
 LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
 
@@ -8,15 +8,27 @@ RUN set -eux; \
         postgresql-client \
         tzdata
 
-RUN set -eux; \
-    pip install pipenv
+FROM base AS python-deps
 
-WORKDIR /app
+RUN set -eux; \
+    apk --no-cache add \
+        # cryptography
+        gcc musl-dev python3-dev libffi-dev openssl-dev cargo \
+    ; \
+    pip install pipenv
 
 COPY Pipfile .
 COPY Pipfile.lock .
+ENV PIPENV_VENV_IN_PROJECT=1
 RUN set -eux; \
-    pipenv install --system
+    pipenv install --deploy
+
+FROM base
+
+COPY --from=python-deps /.venv /.venv
+ENV PATH="/.venv/bin:$PATH"
+
+WORKDIR /app
 
 RUN set -eux; \
     mkdir -p /dump
