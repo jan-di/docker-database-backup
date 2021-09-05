@@ -20,8 +20,7 @@ ENV PIPENV_VENV_IN_PROJECT=1 \
 RUN set -eux; \
     pip install pipenv
 
-COPY Pipfile .
-COPY Pipfile.lock .
+COPY Pipfile Pipfile.lock ./
 RUN set -eux; \
     pipenv install --deploy
 
