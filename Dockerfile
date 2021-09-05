@@ -1,20 +1,20 @@
-FROM python:3.9-alpine AS base
+FROM python:3.9-bullseye AS base
 
 LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
 
 RUN set -eux; \
-    apk --no-cache add \
-        mariadb-client \
+	apt-get update; \
+    apt-get upgrade -y --with-new-pkgs; \
+	apt-get install -y --no-install-recommends \
+		mariadb-client \
         postgresql-client \
-        tzdata
+        tzdata \
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 FROM base AS python-deps
 
 RUN set -eux; \
-    apk --no-cache add \
-        # cryptography
-        gcc musl-dev python3-dev libffi-dev openssl-dev cargo \
-    ; \
     pip install pipenv
 
 COPY Pipfile .
