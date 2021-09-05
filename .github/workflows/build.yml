@@ -3,7 +3,8 @@ name: Build Docker Images
 env:
   DOCKERHUB_TAG: 'jandi/database-backup'
   GITHUB_TAG: 'ghcr.io/jan-di/database-backup'
-  PLATFORMS: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+  PLATFORMS: linux/amd64
+  # PLATFORMS: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
 
 on:
   push:

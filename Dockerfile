@@ -14,12 +14,14 @@ RUN set -eux; \
 
 FROM base AS python-deps
 
+ENV PIPENV_VENV_IN_PROJECT=1 \
+    CI=1
+
 RUN set -eux; \
     pip install pipenv
 
 COPY Pipfile .
 COPY Pipfile.lock .
-ENV PIPENV_VENV_IN_PROJECT=1
 RUN set -eux; \
     pipenv install --deploy
 
