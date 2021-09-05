@@ -4,8 +4,8 @@ LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
 
 RUN set -eux; \
 	apt-get update; \
-    apt-get upgrade -y --with-new-pkgs; \
-	apt-get install -y --no-install-recommends \
+    apt-get upgrade -qq -o=Dpkg::Use-Pty=0 -y --with-new-pkgs; \
+	apt-get install -qq -o=Dpkg::Use-Pty=0 -y --no-install-recommends \
 		mariadb-client \
         postgresql-client \
         tzdata \
