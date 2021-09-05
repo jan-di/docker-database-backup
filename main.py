@@ -48,7 +48,7 @@ while True:
 
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
-            dump_file = f"/dump/{container.name}.sql"
+            dump_file = f"/dump/{database.dump_file if database.dump_file != None else container.name}.sql"
             failed = False
 
             logging.info(

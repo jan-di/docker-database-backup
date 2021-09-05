@@ -20,6 +20,7 @@ LABEL_DEFAULTS = {
     "password": "",
     "type": "auto",
     "port": "auto",
+    "dump_name": None,
     "compress": "false",
     "compression_level": 6,
     "encrypt": "true",
