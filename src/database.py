@@ -58,7 +58,7 @@ class Database:
     if "password" in values: self.password = values["password"]
     if "dump_name" in values: self.dump_name = values["dump_name"]
     if "compress" in values: self.compress = distutils.util.strtobool(values["compress"])
-    if "compression_level" in values: self.compression_level = values["compression_level"]
+    if "compression_level" in values: self.compression_level = int(values["compression_level"])
     if "encrypt" in values: self.encrypt = distutils.util.strtobool(values["encrypt"])
     if "encryption_key" in values: self.encryption_key = values["encryption_key"]
 

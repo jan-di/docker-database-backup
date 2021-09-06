@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Rename option `INTERVAL` to `SCHEDULE`
+- Rename option `VERBOSE` to `DEBUG`
 
 ### Fixed
 - Encapsulated user input in double quotes at dump commands

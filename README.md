@@ -20,10 +20,10 @@ Configure the backup service by specifying environment variables:
 Name | Default | Description
 --- | --- | ---
 `SCHEDULE` | (none) | Specify a cron expression or an integer for the seconds to wait, between two backup cycles. Leave undefined to make a one time run.
-`VERBOSE` | `false` | Increased output
+`DEBUG` | `false` | More verbose output for debugging
 `DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
-`TZ` | UTC | Time Zone for times in log messages
+`TZ` | `UTC` | Time Zone for times in log messages
 `DOCKER_NETWORK_NAME` | `database-backup` | Name of the internal network, that is used to connect to the database containers.
 `DOCKER_TARGET_NAME` | `database-backup-target` | Name of the internal hostname, that is used to connect to the database containers.
 `HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration

@@ -6,7 +6,7 @@ LABEL_PREFIX = "jan-di.database-backup."
 
 CONFIG_DEFAULTS = {
     "schedule": None,
-    "verbose": "false",
+    "debug": "false",
     "dump_uid": "0",
     "dump_gid": "0",
     "docker_network_name": "database-backup",
@@ -31,8 +31,8 @@ class Config:
     def __init__(self, values):
         self.schedule = values["schedule"]
 
-        self.verbose = distutils.util.strtobool(values["verbose"])
-        self.loglevel = logging.DEBUG if self.verbose else logging.INFO
+        self.debug = distutils.util.strtobool(values["debug"])
+        self.loglevel = logging.DEBUG if self.debug else logging.INFO
 
         self.dump_uid = int(values["dump_uid"])
         self.dump_gid = int(values["dump_gid"])
