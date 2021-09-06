@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - AES Encryption of dump files
-- Option to change gzip compression level. Default: 6
+- Support for cron expressions as schedule.
+- Option to change gzip compression level. Default: `6`
 - Option to overwrite the basename of the dump files
 - Options to change the internal network name/target alias
+
+### Changed
+- Rename option `INTERVAL` to `SCHEDULE`
 
 ### Fixed
 - Encapsulated user input in double quotes at dump commands

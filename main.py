@@ -1,8 +1,6 @@
 import logging
 import subprocess
 import os
-import datetime
-import time
 import sys
 
 import pyAesCrypt
@@ -10,6 +8,7 @@ import humanize
 
 from src.database import Database, DatabaseType
 from src.healthcheck import Healthcheck
+from src.schedule import Schedule
 from src import settings
 from src import docker
 
@@ -27,6 +26,10 @@ logging.debug(f"Own Container ID: {own_container.id}")
 
 # Initializing Healthcheck integrations
 healthcheck = Healthcheck(config)
+
+# Initializing Scheduler
+schedule = Schedule(config)
+logging.info(f"Schedule: {schedule.get_humanized_schedule()}")
 
 while True:
     # Start healthcheck integrations
@@ -220,12 +223,11 @@ while True:
             healthcheck.fail(message)
 
     # Scheduling next run
-    if config.interval > 0:
-        nextRun = datetime.datetime.now() + datetime.timedelta(seconds=config.interval)
-        logging.info(
-            "Scheduled next run at {}..".format(nextRun.strftime("%Y-%m-%d %H:%M:%S"))
-        )
+    next_run = schedule.get_next()
+    if next_run != None:
+        logging.info(f"Scheduled next run at {next_run.strftime('%Y-%m-%d %H:%M:%S')}..")
 
-        time.sleep(config.interval)
+        schedule.wait_until(next_run)
     else:
+        logging.info("Exiting backup service")
         sys.exit()

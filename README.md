@@ -19,7 +19,7 @@ Configure the backup service by specifying environment variables:
 
 Name | Default | Description
 --- | --- | ---
-`INTERVAL` | `3600` | Amount of seconds to wait between each backup cycle. Set to `0` to make a one-time backup.
+`SCHEDULE` | (none) | Specify a cron expression or an integer for the seconds to wait, between two backup cycles. Leave undefined to make a one time run.
 `VERBOSE` | `false` | Increased output
 `DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)

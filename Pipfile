@@ -8,6 +8,7 @@ docker = "*"
 humanize = "*"
 requests = "*"
 pyaescrypt = "*"
+croniter = "*"
 
 [dev-packages]
 

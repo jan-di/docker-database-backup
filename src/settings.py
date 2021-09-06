@@ -5,7 +5,7 @@ import distutils.util
 LABEL_PREFIX = "jan-di.database-backup."
 
 CONFIG_DEFAULTS = {
-    "interval": "3600",
+    "schedule": None,
     "verbose": "false",
     "dump_uid": "0",
     "dump_gid": "0",
@@ -29,9 +29,7 @@ LABEL_DEFAULTS = {
 
 class Config:
     def __init__(self, values):
-        self.interval = int(values["interval"])
-        if self.interval < 0:
-            raise AttributeError("Interval must be positive")
+        self.schedule = values["schedule"]
 
         self.verbose = distutils.util.strtobool(values["verbose"])
         self.loglevel = logging.DEBUG if self.verbose else logging.INFO
