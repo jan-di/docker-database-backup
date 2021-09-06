@@ -48,7 +48,7 @@ while True:
 
         for i, container in enumerate(containers):
             database = Database(container, global_labels)
-            dump_file = f"/dump/{database.dump_file if database.dump_file != None else container.name}.sql"
+            dump_file = f"/dump/{database.dump_name if database.dump_name != None else container.name}.sql"
             failed = False
 
             logging.info(
@@ -160,20 +160,24 @@ while True:
                 logging.debug(f"Encrypting dump")
                 encrypted_dump_file = f"{dump_file}.aes"
 
-                try:
-                    if os.path.exists(encrypted_dump_file):
-                        os.remove(encrypted_dump_file)
-
-                    pyAesCrypt.encryptFile(
-                        dump_file, encrypted_dump_file, database.encryption_key
-                    )
-                    os.remove(dump_file)
-                except Exception as e:
-                    logging.error(f"FAILED: Error while encrypting: {e}")
+                if database.encryption_key == None:
+                    logging.error(f"FAILED: No encryption key specified!")
                     failed = True
+                else:
+                    try:
+                        if os.path.exists(encrypted_dump_file):
+                            os.remove(encrypted_dump_file)
 
-                processed_dump_size = os.path.getsize(encrypted_dump_file)
-                dump_file = encrypted_dump_file
+                        pyAesCrypt.encryptFile(
+                            dump_file, encrypted_dump_file, database.encryption_key
+                        )
+                        os.remove(dump_file)
+                    except Exception as e:
+                        logging.error(f"FAILED: Error while encrypting: {e}")
+                        failed = True
+
+                    processed_dump_size = os.path.getsize(encrypted_dump_file)
+                    dump_file = encrypted_dump_file
 
             else:
                 database.encrypt = False

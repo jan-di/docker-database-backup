@@ -23,7 +23,7 @@ LABEL_DEFAULTS = {
     "dump_name": None,
     "compress": "false",
     "compression_level": 6,
-    "encrypt": "true",
+    "encrypt": "false",
     "encryption_key": None
 }
 

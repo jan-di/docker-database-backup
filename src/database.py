@@ -56,7 +56,7 @@ class Database:
     if "port" in values: self.port = values["port"]
     if "username" in values: self.username = values["username"]
     if "password" in values: self.password = values["password"]
-    if "dump_file" in values: self.dump_file = values["dump_file"]
+    if "dump_name" in values: self.dump_name = values["dump_name"]
     if "compress" in values: self.compress = distutils.util.strtobool(values["compress"])
     if "compression_level" in values: self.compression_level = values["compression_level"]
     if "encrypt" in values: self.encrypt = distutils.util.strtobool(values["encrypt"])
