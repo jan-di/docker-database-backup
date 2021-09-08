@@ -59,7 +59,7 @@ services:
     image: ghcr.io/jan-di/database-backup
     environment:
       - TZ=Europe/Berlin
-      - INTERVAL=600
+      - SCHEDULE=600
       - GLOBAL_PASSWORD=secret-password
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
