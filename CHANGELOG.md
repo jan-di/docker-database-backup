@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - AES Encryption of dump files
 - Support for cron expressions as schedule.
+- Option to create a backup right after start, independent of the schedule.
 - Option to change gzip compression level. Default: `6`
 - Option to overwrite the basename of the dump files
 - Options to change the internal network name/target alias

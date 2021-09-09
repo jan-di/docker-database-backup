@@ -24,10 +24,7 @@ backup = Backup(config, global_labels, docker, healthcheck)
 schedule = Schedule(config)
 logging.info(f"Schedule: {schedule.get_humanized_schedule()}")
 
-
 while True:
-    backup.run()
-
     # Scheduling next run
     next_run = schedule.get_next()
     if next_run != None:
@@ -39,3 +36,5 @@ while True:
     else:
         logging.info("Exiting backup service")
         sys.exit()
+
+    backup.run()

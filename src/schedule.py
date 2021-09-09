@@ -10,17 +10,22 @@ class ScheduleMode(Enum):
 
 class Schedule:
     def __init__(self, config):
+        self._startup_run_done = False
+
         if config.schedule == None:
             self.mode = ScheduleMode.once
+            self.run_at_startup = True 
         else:
             try:
                 self.interval = int(config.schedule)
                 self.cron = None
                 self.mode = ScheduleMode.interval
+                self.run_at_startup = config.run_at_startup if config.run_at_startup != None else True
             except ValueError:
                 self.interval = None
                 self.cron = config.schedule
                 self.mode = ScheduleMode.cron
+                self.run_at_startup = config.run_at_startup if config.run_at_startup != None else False
 
         if self.mode == ScheduleMode.interval:
             if self.interval <= 0:
@@ -33,6 +38,10 @@ class Schedule:
     def get_next(self):
         now = datetime.datetime.now()
 
+        if self.run_at_startup and not self._startup_run_done:
+            self._startup_run_done = True
+            return now
+
         if self.mode == ScheduleMode.once:
             return None
         elif self.mode == ScheduleMode.interval:
@@ -42,12 +51,14 @@ class Schedule:
             return cron.get_next(datetime.datetime)
 
     def get_humanized_schedule(self):
+        run_at_startup_suffix = ', run at startup' if self.run_at_startup else ''
+
         if self.mode == ScheduleMode.once:
             return 'Run once'
         elif self.mode == ScheduleMode.interval:
-            return f'Interval ({self.interval} seconds)'
+            return f'Interval ({self.interval} seconds){run_at_startup_suffix}'
         elif self.mode == ScheduleMode.cron:
-            return f'Cron ({self.cron})'
+            return f'Cron ({self.cron}){run_at_startup_suffix}'
 
     def wait_until(self, until):
         now = datetime.datetime.now()

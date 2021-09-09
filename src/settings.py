@@ -6,6 +6,7 @@ LABEL_PREFIX = "jan-di.database-backup."
 
 CONFIG_DEFAULTS = {
     "schedule": None,
+    "run_at_startup": None,
     "debug": "false",
     "dump_uid": "0",
     "dump_gid": "0",
@@ -30,8 +31,9 @@ LABEL_DEFAULTS = {
 class Config:
     def __init__(self, values):
         self.schedule = values["schedule"]
+        self.run_at_startup = _convert_bool(values["run_at_startup"], True)
 
-        self.debug = distutils.util.strtobool(values["debug"])
+        self.debug = _convert_bool(values["debug"])
         self.loglevel = logging.DEBUG if self.debug else logging.INFO
 
         self.dump_uid = int(values["dump_uid"])
@@ -60,3 +62,9 @@ def _create_env_name(name, prefix = ""):
     if len(prefix) > 0:
         prefix = prefix + "."
     return "{}{}".format(prefix, name).upper().replace(".", "_")
+
+def _convert_bool(value, nullable = False):
+    if nullable:
+        return distutils.util.strtobool(value) if value != None else None
+    else:
+        return distutils.util.strtobool(value)

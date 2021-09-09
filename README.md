@@ -19,14 +19,15 @@ Configure the backup service by specifying environment variables:
 
 Name | Default | Description
 --- | --- | ---
-`SCHEDULE` | (none) | Specify a cron expression or an integer for the seconds to wait, between two backup cycles. Leave undefined to make a one time run.
-`DEBUG` | `false` | More verbose output for debugging
+`TZ` | `UTC` | Time Zone for scheduling and log messages
+`SCHEDULE` | (none) | Specify a cron expression or an interval (number of seconds to wait between backup cycles). Leave undefined to make a one time run.
+`RUN_AT_STARTUP` | (none) | Do a backup right after the backup service starts. If not defined, it is enabled when using an interval as schedule, and disabled when using cron expressions. Not used, if no schedule is defined.
 `DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
-`TZ` | `UTC` | Time Zone for times in log messages
+`HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration
+`DEBUG` | `false` | More verbose output for debugging
 `DOCKER_NETWORK_NAME` | `database-backup` | Name of the internal network, that is used to connect to the database containers.
 `DOCKER_TARGET_NAME` | `database-backup-target` | Name of the internal hostname, that is used to connect to the database containers.
-`HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration
 
 You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`. See next chapter for reference.
 
