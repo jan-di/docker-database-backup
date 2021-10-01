@@ -6,6 +6,7 @@ LABEL_PREFIX = "jan-di.database-backup."
 
 CONFIG_DEFAULTS = {
     "schedule": None,
+    "schedule_hash_id": None,
     "run_at_startup": None,
     "debug": "false",
     "dump_uid": "0",
@@ -31,6 +32,7 @@ LABEL_DEFAULTS = {
 class Config:
     def __init__(self, values):
         self.schedule = values["schedule"]
+        self.schedule_hash_id = values["schedule_hash_id"]
         self.run_at_startup = _convert_bool(values["run_at_startup"], True)
 
         self.debug = _convert_bool(values["debug"])

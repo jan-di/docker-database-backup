@@ -1,5 +1,6 @@
 import datetime
 import time
+import socket
 from croniter import croniter
 from enum import Enum
 
@@ -32,7 +33,9 @@ class Schedule:
                 raise ValueError("Interval must be at least one second!")
 
         if self.mode == ScheduleMode.cron:
-            if not croniter.is_valid(self.cron):
+            self.schedule_hash_id = str.encode(config.schedule_hash_id if config.schedule_hash_id != None else socket.getfqdn())
+
+            if not croniter.is_valid(self.cron, hash_id=self.schedule_hash_id):
                 raise ValueError("Invalid cron expression!")
 
     def get_next(self):
@@ -47,7 +50,7 @@ class Schedule:
         elif self.mode == ScheduleMode.interval:
             return now + datetime.timedelta(seconds=self.interval)
         elif self.mode == ScheduleMode.cron:
-            cron = croniter(self.cron, now)
+            cron = croniter(self.cron, now, hash_id=self.schedule_hash_id)
             return cron.get_next(datetime.datetime)
 
     def get_humanized_schedule(self):

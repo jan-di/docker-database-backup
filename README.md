@@ -20,7 +20,8 @@ Configure the backup service by specifying environment variables:
 Name | Default | Description
 --- | --- | ---
 `TZ` | `UTC` | Time Zone for scheduling and log messages
-`SCHEDULE` | (none) | Specify a cron expression or an interval (number of seconds to wait between backup cycles). Leave undefined to make a one time run.
+`SCHEDULE` | (none) | Specify a cron expression or an interval (number of seconds to wait between backup cycles). Leave undefined to make a one time run. See [Croniter Documentation](https://pypi.org/project/croniter) for cron options.
+`SCHEDULE_HASH_ID` | (none) | Seed for hashed components in cron expressions. If not defined, the hostname of the container is used.
 `RUN_AT_STARTUP` | (none) | Do a backup right after the backup service starts. If not defined, it is enabled when using an interval as schedule, and disabled when using cron expressions. Not used, if no schedule is defined.
 `DUMP_UID` | `-1` | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
