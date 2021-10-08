@@ -1,4 +1,4 @@
-FROM python:3.9.7-alpine3.14 AS base
+FROM python:3.10.0-alpine3.14 AS base
 
 LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
 
