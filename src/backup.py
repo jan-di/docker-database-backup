@@ -4,11 +4,15 @@ from src.database import Database, DatabaseType
 from src import settings
 import subprocess
 import os
+import glob
+import datetime
 import pyAesCrypt
 import humanize
 
 
 class Backup:
+    DUMP_DIR = '/dump'
+
     def __init__(self, config, global_labels, docker, healthcheck):
         self._config = config
         self._global_labels = global_labels
@@ -32,7 +36,9 @@ class Backup:
 
             for i, container in enumerate(containers):
                 database = Database(container, self._global_labels)
-                dump_file = f"/dump/{database.dump_name if database.dump_name != None else container.name}.sql"
+                dump_name_part = database.dump_name if database.dump_name != None else container.name
+                dump_timestamp_part = (datetime.datetime.now()).strftime("_%Y-%m-%d_%H-%M-%S") if database.dump_timestamp else ''
+                dump_file = f"{self.DUMP_DIR}/{dump_name_part}{dump_timestamp_part}.sql"
                 failed = False
 
                 logging.info(
@@ -47,12 +53,12 @@ class Backup:
 
                 if database.type == DatabaseType.unknown:
                     logging.error(
-                        "FAILED: Cannot read database type. Please specify via label."
+                        "> FAILED: Cannot read database type. Please specify via label."
                     )
                     failed = True
 
                 logging.debug(
-                    "Login {}@host:{} using Password: {}".format(
+                    "> Login {}@host:{} using Password: {}".format(
                         database.username,
                         database.port,
                         "YES" if len(database.password) > 0 else "NO",
@@ -103,7 +109,7 @@ class Backup:
                 except subprocess.CalledProcessError as e:
                     error_text = f"\n{e.stderr.strip()}".replace("\n", "\n> ").strip()
                     logging.error(
-                        f"FAILED. Error while crating dump. Return Code: {e.returncode}; Error Output:"
+                        f"> FAILED. Error while crating dump. Return Code: {e.returncode}; Error Output:"
                     )
                     logging.error(f"{error_text}")
                     failed = True
@@ -112,19 +118,19 @@ class Backup:
 
                 if not failed and (not os.path.exists(dump_file)):
                     logging.error(
-                        f"FAILED: Dump cannot be created due to an unknown error!"
+                        f"> FAILED: Dump cannot be created due to an unknown error!"
                     )
                     failed = True
 
                 dump_size = os.path.getsize(dump_file)
                 if not failed and dump_size == 0:
-                    logging.error(f"FAILED: Dump file is empty!")
+                    logging.error(f"> FAILED: Dump file is empty!")
                     failed = True
 
                 # Compress pump
                 if not failed and database.compress:
                     logging.debug(
-                        f"Compressing dump (level: {database.compression_level})"
+                        f"> Compressing dump (level: {database.compression_level})"
                     )
                     compressed_dump_file = f"{dump_file}.gz"
 
@@ -137,7 +143,7 @@ class Backup:
                             shell=True,
                         )
                     except Exception as e:
-                        logging.error(f"FAILED: Error while compressing: {e}")
+                        logging.error(f"> FAILED: Error while compressing: {e}")
                         failed = True
 
                     processed_dump_size = os.path.getsize(compressed_dump_file)
@@ -145,11 +151,11 @@ class Backup:
 
                 # Encrypt dump
                 if not failed and database.encrypt and dump_size > 0:
-                    logging.debug(f"Encrypting dump")
+                    logging.debug(f"> Encrypting dump")
                     encrypted_dump_file = f"{dump_file}.aes"
 
                     if database.encryption_key == None:
-                        logging.error(f"FAILED: No encryption key specified!")
+                        logging.error(f"> FAILED: No encryption key specified!")
                         failed = True
                     else:
                         try:
@@ -161,7 +167,7 @@ class Backup:
                             )
                             os.remove(dump_file)
                         except Exception as e:
-                            logging.error(f"FAILED: Error while encrypting: {e}")
+                            logging.error(f"> FAILED: Error while encrypting: {e}")
                             failed = True
 
                         processed_dump_size = os.path.getsize(encrypted_dump_file)
@@ -175,7 +181,7 @@ class Backup:
 
                     successful_count += 1
                     logging.info(
-                        "SUCCESS. Size: {}{}".format(
+                        "> SUCCESS. Size: {}{}".format(
                             humanize.naturalsize(dump_size),
                             " ("
                             + humanize.naturalsize(processed_dump_size)
@@ -186,6 +192,18 @@ class Backup:
                     )
 
             self._docker.remove_backup_network()
+
+            # Cleanup
+            files = sorted(glob.glob(f"{self.DUMP_DIR}/{dump_name_part}_*.*"))
+            if len(files) > 1:
+                #todo: retention policy for keeping multiple dumps
+                deleted_files = 0
+                for i in range(len(files) - 1):
+                    deleted_files += 1
+                    os.remove(files[i])
+                
+                if deleted_files > 0:
+                    logging.info(f"> Deleted {deleted_files} old dump files")
 
         # Summarize backup cycle
         full_success = successful_count == container_count

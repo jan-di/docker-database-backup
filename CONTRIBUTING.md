@@ -8,4 +8,4 @@
 
 ## Test Locally
 
-`docker build . -t docker-database-backup-debug && docker run -e GLOBAL_COMPRESS=true -e INTERVAL=5 -v /var/run/docker.sock:/var/run/docker.sock docker-database-backup-debug`
+`docker build . -t docker-database-backup-debug && docker run -v /var/run/docker.sock:/var/run/docker.sock -e GLOBAL_COMPRESS=true -e SCHEDULE=5 docker-database-backup-debug`

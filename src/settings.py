@@ -23,8 +23,9 @@ LABEL_DEFAULTS = {
     "type": "auto",
     "port": "auto",
     "dump_name": None,
+    "dump_timestamp": "false",
     "compress": "false",
-    "compression_level": 6,
+    "compression_level": "6",
     "encrypt": "false",
     "encryption_key": None
 }

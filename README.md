@@ -44,6 +44,7 @@ Name | Default | Description
 `password` | (none) | Login password
 `port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type.
 `dump_name` | (none) | Overwrite the base name of the dump file. If not defined, the container name is used.
+`dump_timestamp` | `false` | Append timestamp to dump file (Format: `_YYYY-MM-DD_hh-mm-ss`)
 `compress` | `false` | Compress SQL Dump with gzip
 `compression_level` | `6` | Gzip compression level (1-9)
 `encrypt` | `false` | Encrypt SQL Dump with AES
