@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Support multiple service instances on the same docker engine
 - Option to add a timestamp at the end of the dump file
 
 ### Changed

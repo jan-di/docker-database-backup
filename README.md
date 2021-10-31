@@ -27,8 +27,9 @@ Name | Default | Description
 `DUMP_GID` | `-1` | GID of dump files. `-1` means default (docker executing user)
 `HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration
 `DEBUG` | `false` | More verbose output for debugging
-`DOCKER_NETWORK_NAME` | `database-backup` | Name of the internal network, that is used to connect to the database containers.
-`DOCKER_TARGET_NAME` | `database-backup-target` | Name of the internal hostname, that is used to connect to the database containers.
+`DOCKER_NETWORK_NAME` | `database-backup` | Prefix for the name of the internal network, that is used to connect to the database containers.
+`DOCKER_TARGET_NAME` | `database-backup-target` | Prefix for the name of the internal hostname, that is used to connect to the database containers.
+`INSTANCE_ID` | `default` | Unique ID of each backup service instance. Must only be specified if more than one instance should be run on the same docker engine. If you change the value of `INSTANCE_ID`, the backup service container also needs a label `jan-di.database-backup.instance_id` with the same value, to allow it to find itself via the docker API.
 
 You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME`. See next chapter for reference.
 

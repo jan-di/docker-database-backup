@@ -1,19 +1,19 @@
 FROM python:3.10.0-alpine3.14 AS base
 
-LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
+LABEL jan-di.database-backup.instance_id="default"
 
 RUN set -eux; \
     apk --no-cache add \
-        mariadb-client \
-        postgresql-client \
-        tzdata
+    mariadb-client \
+    postgresql-client \
+    tzdata
 
 FROM base AS python-deps
 
 RUN set -eux; \
     apk --no-cache add \
-        # cryptography
-        gcc musl-dev python3-dev libffi-dev openssl-dev cargo \
+    # cryptography
+    gcc musl-dev python3-dev libffi-dev openssl-dev cargo \
     ; \
     pip install pipenv
 

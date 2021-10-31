@@ -6,7 +6,11 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "INSTANCE_ID": "devcontainer"
+            },
+            "envFile": "${workspaceFolder}/.vscode/.env"
         }
     ]
 }

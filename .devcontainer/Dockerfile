@@ -7,5 +7,5 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends mariadb-client postgresql-client
 
-LABEL org.opencontainers.image.ref.name="jan-di/database-backup"
+LABEL jan-di.database-backup.instance_id="devcontainer"
 RUN mkdir /dump && chmod 777 /dump

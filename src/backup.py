@@ -84,6 +84,7 @@ class Backup:
 
                     # Create dump
                     self._docker.connect_target(container)
+                    target_host = self._docker.get_target_name(container)
 
                     try:
                         env = os.environ.copy()
@@ -95,7 +96,7 @@ class Backup:
                             subprocess.run(
                                 (
                                     f"mysqldump"
-                                    f' --host="{self._config.docker_target_name}"'
+                                    f' --host="{target_host}"'
                                     f' --user="{database.username}"'
                                     f' --password="{database.password}"'
                                     f" --all-databases"
@@ -114,7 +115,7 @@ class Backup:
                             subprocess.run(
                                 (
                                     f"pg_dumpall"
-                                    f' --host="{self._config.docker_target_name}"'
+                                    f' --host="{target_host}"'
                                     f' --username="{database.username}"'
                                     f' > "{dump_file}"'
                                 ),
@@ -141,10 +142,11 @@ class Backup:
                     )
                     failed = True
 
-                dump_size = os.path.getsize(dump_file)
-                if not failed and dump_size == 0:
-                    logging.error("> FAILED: Dump file is empty!")
-                    failed = True
+                if not failed:
+                    dump_size = os.path.getsize(dump_file)
+                    if dump_size == 0:
+                        logging.error("> FAILED: Dump file is empty!")
+                        failed = True
 
                 # Compress pump
                 if not failed and database.compress:

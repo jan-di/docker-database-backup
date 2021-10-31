@@ -13,6 +13,7 @@ CONFIG_DEFAULTS = {
     "dump_gid": "0",
     "docker_network_name": "database-backup",
     "docker_target_name": "database-backup-target",
+    "instance_id": "default",
     "healthchecks_io_url": None
 }
 
@@ -45,6 +46,8 @@ class Config:
 
         self.docker_network_name = values["docker_network_name"]
         self.docker_target_name = values["docker_target_name"]
+
+        self.instance_id = values["instance_id"]
 
         self.healthchecks_io_url = values["healthchecks_io_url"]
 
