@@ -4,36 +4,39 @@ import socket
 from croniter import croniter
 from enum import Enum
 
+
 class ScheduleMode(Enum):
-  once = 1
-  interval = 2
-  cron = 3
+    once = 1
+    interval = 2
+    cron = 3
+
 
 class Schedule:
     def __init__(self, config):
         self._startup_run_done = False
 
-        if config.schedule == None:
+        if config.schedule is None:
             self.mode = ScheduleMode.once
-            self.run_at_startup = True 
+            self.run_at_startup = True
         else:
             try:
                 self.interval = int(config.schedule)
                 self.cron = None
                 self.mode = ScheduleMode.interval
-                self.run_at_startup = config.run_at_startup if config.run_at_startup != None else True
+                self.run_at_startup = config.run_at_startup if config.run_at_startup is not None else True
             except ValueError:
                 self.interval = None
                 self.cron = config.schedule
                 self.mode = ScheduleMode.cron
-                self.run_at_startup = config.run_at_startup if config.run_at_startup != None else False
+                self.run_at_startup = config.run_at_startup if config.run_at_startup is not None else False
 
         if self.mode == ScheduleMode.interval:
             if self.interval <= 0:
                 raise ValueError("Interval must be at least one second!")
 
         if self.mode == ScheduleMode.cron:
-            self.schedule_hash_id = str.encode(config.schedule_hash_id if config.schedule_hash_id != None else socket.getfqdn())
+            self.schedule_hash_id = str.encode(
+                config.schedule_hash_id if config.schedule_hash_id is not None else socket.getfqdn())
 
             if not croniter.is_valid(self.cron, hash_id=self.schedule_hash_id):
                 raise ValueError("Invalid cron expression!")
@@ -69,4 +72,3 @@ class Schedule:
         diff = (until - now).total_seconds()
         if diff > 0:
             time.sleep(diff)
-

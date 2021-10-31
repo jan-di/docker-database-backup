@@ -28,7 +28,8 @@ class Docker:
             raise RuntimeError("Cannot determine own container id!")
         elif len(containers) > 1:
             raise RuntimeError(
-                "Detected another instance of this image. Running multiple instances of the backup service is currently not supported!"
+                "Detected another instance of this image."
+                " Running multiple instances of the backup service is currently not supported!"
             )
 
         self._own_container = containers[0]
@@ -41,17 +42,19 @@ class Docker:
         )
 
     def create_backup_network(self):
-        self._network = self._client.networks.create(self._config.docker_network_name)
+        self._network = self._client.networks.create(
+            self._config.docker_network_name)
         self._network.connect(self._own_container.id)
 
     def remove_backup_network(self):
-        if self._network != None:
+        if self._network is not None:
             self._network.disconnect(self._own_container.id)
             self._network.remove()
             self._network = None
 
     def connect_target(self, container):
-        self._network.connect(container, aliases=[self._config.docker_target_name])
+        self._network.connect(container, aliases=[
+                              self._config.docker_target_name])
 
     def disconnect_target(self, container):
         self._network.disconnect(container)

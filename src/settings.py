@@ -30,6 +30,7 @@ LABEL_DEFAULTS = {
     "encryption_key": None
 }
 
+
 class Config:
     def __init__(self, values):
         self.schedule = values["schedule"]
@@ -47,6 +48,7 @@ class Config:
 
         self.healthchecks_io_url = values["healthchecks_io_url"]
 
+
 def read():
     config_values = {}
     label_values = {}
@@ -61,13 +63,15 @@ def read():
 
     return Config(config_values), label_values
 
-def _create_env_name(name, prefix = ""):
+
+def _create_env_name(name, prefix=""):
     if len(prefix) > 0:
         prefix = prefix + "."
     return "{}{}".format(prefix, name).upper().replace(".", "_")
 
-def _convert_bool(value, nullable = False):
+
+def _convert_bool(value, nullable=False):
     if nullable:
-        return distutils.util.strtobool(value) if value != None else None
+        return distutils.util.strtobool(value) if value is not None else None
     else:
         return distutils.util.strtobool(value)

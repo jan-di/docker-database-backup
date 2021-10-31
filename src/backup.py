@@ -8,10 +8,12 @@ import glob
 import datetime
 import pyAesCrypt
 import humanize
+import re
 
 
 class Backup:
-    DUMP_DIR = '/dump'
+    DUMP_DIR = "/dump"
+    DUMP_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$")
 
     def __init__(self, config, global_labels, docker, healthcheck):
         self._config = config
@@ -24,20 +26,28 @@ class Backup:
         self._healthcheck.start("Starting backup cycle.")
 
         # Find available database containers
-        containers = self._docker.get_targets(f"{settings.LABEL_PREFIX}enable=true")
+        containers = self._docker.get_targets(
+            f"{settings.LABEL_PREFIX}enable=true")
 
         container_count = len(containers)
         successful_count = 0
 
         if container_count:
-            logging.info(f"Starting backup cycle with {len(containers)} container(s)..")
+            logging.info(
+                f"Starting backup cycle with {len(containers)} container(s)..")
 
             self._docker.create_backup_network()
 
             for i, container in enumerate(containers):
                 database = Database(container, self._global_labels)
-                dump_name_part = database.dump_name if database.dump_name != None else container.name
-                dump_timestamp_part = (datetime.datetime.now()).strftime("_%Y-%m-%d_%H-%M-%S") if database.dump_timestamp else ''
+                dump_name_part = (
+                    database.dump_name if database.dump_name is not None else container.name
+                )
+                dump_timestamp_part = (
+                    (datetime.datetime.now()).strftime("_%Y-%m-%d_%H-%M-%S")
+                    if database.dump_timestamp
+                    else ""
+                )
                 dump_file = f"{self.DUMP_DIR}/{dump_name_part}{dump_timestamp_part}.sql"
                 failed = False
 
@@ -51,86 +61,95 @@ class Backup:
                     )
                 )
 
-                if database.type == DatabaseType.unknown:
+                if not self.DUMP_NAME_PATTERN.match(dump_name_part):
+                    logging.error(
+                        f"> FAILED: Invalid dump name. Name must match '{self.DUMP_NAME_PATTERN.pattern}'."
+                    )
+                    failed = True
+
+                if not failed and database.type == DatabaseType.unknown:
                     logging.error(
                         "> FAILED: Cannot read database type. Please specify via label."
                     )
                     failed = True
 
-                logging.debug(
-                    "> Login {}@host:{} using Password: {}".format(
-                        database.username,
-                        database.port,
-                        "YES" if len(database.password) > 0 else "NO",
+                if not failed:
+                    logging.debug(
+                        "> Login {}@host:{} using Password: {}".format(
+                            database.username,
+                            database.port,
+                            "YES" if len(database.password) > 0 else "NO",
+                        )
                     )
-                )
 
-                # Create dump
-                self._docker.connect_target(container)
+                    # Create dump
+                    self._docker.connect_target(container)
 
-                try:
-                    env = os.environ.copy()
+                    try:
+                        env = os.environ.copy()
 
-                    if (
-                        database.type == DatabaseType.mysql
-                        or database.type == DatabaseType.mariadb
-                    ):
-                        subprocess.run(
-                            (
-                                f"mysqldump"
-                                f' --host="{self._config.docker_target_name}"'
-                                f' --user="{database.username}"'
-                                f' --password="{database.password}"'
-                                f" --all-databases"
-                                f" --ignore-database=mysql"
-                                f" --ignore-database=information_schema"
-                                f" --ignore-database=performance_schema"
-                                f' > "{dump_file}"'
-                            ),
-                            shell=True,
-                            text=True,
-                            capture_output=True,
-                            env=env,
-                        ).check_returncode()
-                    elif database.type == DatabaseType.postgres:
-                        env["PGPASSWORD"] = database.password
-                        subprocess.run(
-                            (
-                                f"pg_dumpall"
-                                f' --host="{self._config.docker_target_name}"'
-                                f' --username="{database.username}"'
-                                f' > "{dump_file}"'
-                            ),
-                            shell=True,
-                            text=True,
-                            capture_output=True,
-                            env=env,
-                        ).check_returncode()
-                except subprocess.CalledProcessError as e:
-                    error_text = f"\n{e.stderr.strip()}".replace("\n", "\n> ").strip()
-                    logging.error(
-                        f"> FAILED. Error while crating dump. Return Code: {e.returncode}; Error Output:"
-                    )
-                    logging.error(f"{error_text}")
-                    failed = True
+                        if (
+                            database.type == DatabaseType.mysql
+                            or database.type == DatabaseType.mariadb
+                        ):
+                            subprocess.run(
+                                (
+                                    f"mysqldump"
+                                    f' --host="{self._config.docker_target_name}"'
+                                    f' --user="{database.username}"'
+                                    f' --password="{database.password}"'
+                                    f" --all-databases"
+                                    f" --ignore-database=mysql"
+                                    f" --ignore-database=information_schema"
+                                    f" --ignore-database=performance_schema"
+                                    f' > "{dump_file}"'
+                                ),
+                                shell=True,
+                                text=True,
+                                capture_output=True,
+                                env=env,
+                            ).check_returncode()
+                        elif database.type == DatabaseType.postgres:
+                            env["PGPASSWORD"] = database.password
+                            subprocess.run(
+                                (
+                                    f"pg_dumpall"
+                                    f' --host="{self._config.docker_target_name}"'
+                                    f' --username="{database.username}"'
+                                    f' > "{dump_file}"'
+                                ),
+                                shell=True,
+                                text=True,
+                                capture_output=True,
+                                env=env,
+                            ).check_returncode()
+                    except subprocess.CalledProcessError as e:
+                        error_text = f"\n{e.stderr.strip()}".replace(
+                            "\n", "\n> "
+                        ).strip()
+                        logging.error(
+                            f"> FAILED. Error while crating dump. Return Code: {e.returncode}; Error Output:"
+                        )
+                        logging.error(f"{error_text}")
+                        failed = True
 
-                self._docker.disconnect_target(container)
+                    self._docker.disconnect_target(container)
 
                 if not failed and (not os.path.exists(dump_file)):
                     logging.error(
-                        f"> FAILED: Dump cannot be created due to an unknown error!"
+                        "> FAILED: Dump cannot be created due to an unknown error!"
                     )
                     failed = True
 
                 dump_size = os.path.getsize(dump_file)
                 if not failed and dump_size == 0:
-                    logging.error(f"> FAILED: Dump file is empty!")
+                    logging.error("> FAILED: Dump file is empty!")
                     failed = True
 
                 # Compress pump
                 if not failed and database.compress:
                     logging.debug(
-                        f"> Compressing dump (level: {database.compression_level})"
+                        "> Compressing dump (level: {database.compression_level})"
                     )
                     compressed_dump_file = f"{dump_file}.gz"
 
@@ -143,7 +162,8 @@ class Backup:
                             shell=True,
                         )
                     except Exception as e:
-                        logging.error(f"> FAILED: Error while compressing: {e}")
+                        logging.error(
+                            f"> FAILED: Error while compressing: {e}")
                         failed = True
 
                     processed_dump_size = os.path.getsize(compressed_dump_file)
@@ -151,11 +171,12 @@ class Backup:
 
                 # Encrypt dump
                 if not failed and database.encrypt and dump_size > 0:
-                    logging.debug(f"> Encrypting dump")
+                    logging.debug("> Encrypting dump")
                     encrypted_dump_file = f"{dump_file}.aes"
 
-                    if database.encryption_key == None:
-                        logging.error(f"> FAILED: No encryption key specified!")
+                    if database.encryption_key is None:
+                        logging.error(
+                            "> FAILED: No encryption key specified!")
                         failed = True
                     else:
                         try:
@@ -167,10 +188,12 @@ class Backup:
                             )
                             os.remove(dump_file)
                         except Exception as e:
-                            logging.error(f"> FAILED: Error while encrypting: {e}")
+                            logging.error(
+                                f"> FAILED: Error while encrypting: {e}")
                             failed = True
 
-                        processed_dump_size = os.path.getsize(encrypted_dump_file)
+                        processed_dump_size = os.path.getsize(
+                            encrypted_dump_file)
                         dump_file = encrypted_dump_file
 
                 if not failed:
@@ -196,12 +219,12 @@ class Backup:
             # Cleanup
             files = sorted(glob.glob(f"{self.DUMP_DIR}/{dump_name_part}_*.*"))
             if len(files) > 1:
-                #todo: retention policy for keeping multiple dumps
+                # todo: retention policy for keeping multiple dumps
                 deleted_files = 0
                 for i in range(len(files) - 1):
                     deleted_files += 1
                     os.remove(files[i])
-                
+
                 if deleted_files > 0:
                     logging.info(f"> Deleted {deleted_files} old dump files")
 

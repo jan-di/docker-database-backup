@@ -27,7 +27,7 @@ logging.info(f"Schedule: {schedule.get_humanized_schedule()}")
 while True:
     # Scheduling next run
     next_run = schedule.get_next()
-    if next_run != None:
+    if next_run is not None:
         logging.info(
             f"Scheduled next run at {next_run.strftime('%Y-%m-%d %H:%M:%S')}.."
         )
