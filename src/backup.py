@@ -86,7 +86,7 @@ class Backup:
 
                     # Create dump
                     self._docker.connect_target(container)
-                    target_host = self._docker.get_target_name(container)
+                    target_host = self._docker.get_target_name()
 
                     try:
                         env = os.environ.copy()

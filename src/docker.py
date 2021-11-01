@@ -19,6 +19,8 @@ class Docker:
 
         logging.debug(f"Instance ID: {config.instance_id}")
 
+        self.cleanup_old_networks()
+
         containers = self._client.containers.list(
             filters={
                 "status": "running",
@@ -44,8 +46,30 @@ class Docker:
             filters={"status": "running", "label": label}
         )
 
+    def get_network_name(self):
+        return f"{self._config.docker_network_name}_{self._config.instance_id}"
+
+    def cleanup_old_networks(self):
+        network_name = self.get_network_name()
+        old_networks = self._client.networks.list(
+            names=network_name, greedy=True)
+        if len(old_networks):
+            logging.info(f"Cleanup {len(old_networks)} old networks")
+            for i, old_network in enumerate(old_networks):
+                logging.debug(
+                    f"Remove network {i+1}/{len(old_networks)}: {old_network.id}...")
+                for j, container in enumerate(old_network.containers):
+                    logging.debug(
+                        f"Remove network from container {j+1}/{len(old_network.containers)}: {container.name}")
+                    self._client.networks.get(old_network.id).disconnect(
+                        container.id, force=True)
+                self._client.networks.get(old_network.id).remove()
+            logging.debug("Finished cleaning up old networks")
+        else:
+            logging.debug("No old networks to clean up")
+
     def create_backup_network(self):
-        network_name = f"{self._config.docker_network_name}_{self._config.instance_id}"
+        network_name = self.get_network_name()
 
         self._network = self._client.networks.create(network_name)
         self._network.connect(self._own_container.id)
@@ -56,11 +80,11 @@ class Docker:
             self._network.remove()
             self._network = None
 
-    def get_target_name(self, container):
+    def get_target_name(self):
         return f"{self._config.docker_target_name}_{self._config.instance_id}"
 
     def connect_target(self, container):
-        target_name = self.get_target_name(container)
+        target_name = self.get_target_name()
 
         self._network.connect(container, aliases=[target_name])
 
