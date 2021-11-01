@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support multiple service instances on the same docker engine
-- Option to add a timestamp at the end of the dump file
+- Add retention policies to keep multiple versions of dump files.
+- Option to add a timestamp at the end of the dump file. Works also if no retention policy is used.
 
 ### Changed
 - Custom dump file names now follow the same naming rules as docker containers.

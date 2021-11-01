@@ -21,14 +21,19 @@ LABEL_DEFAULTS = {
     "enable": "false",
     "username": "root",
     "password": "",
-    "type": "auto",
-    "port": "auto",
-    "dump_name": None,
-    "dump_timestamp": "false",
+    "type": "auto",  # via image tag
+    "port": "auto",  # via type
     "compress": "false",
     "compression_level": "6",
     "encrypt": "false",
-    "encryption_key": None
+    "encryption_key": "",
+    "retention_policy": "none",
+    "retention_min_count": "auto",  # via retention_policy
+    "retention_min_age": "auto",  # via retention_policy
+    "retention_max_count": "auto",  # via retention_policy
+    "retention_max_age": "auto",  # via retention_policy
+    "dump_name": "",
+    "dump_timestamp": "auto",  # via retention_policy
 }
 
 

@@ -14,6 +14,7 @@ humanize = "*"
 requests = "*"
 pyaescrypt = "*"
 croniter = "*"
+tempora = "*"
 
 [dev-packages]
 

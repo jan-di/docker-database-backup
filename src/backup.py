@@ -39,12 +39,14 @@ class Backup:
             self._docker.create_backup_network()
 
             for i, container in enumerate(containers):
+                now = datetime.datetime.now()
                 database = Database(container, self._global_labels)
                 dump_name_part = (
-                    database.dump_name if database.dump_name is not None else container.name
+                    database.dump_name if len(
+                        database.dump_name) > 0 else container.name
                 )
                 dump_timestamp_part = (
-                    (datetime.datetime.now()).strftime("_%Y-%m-%d_%H-%M-%S")
+                    now.strftime("_%Y-%m-%d_%H-%M-%S")
                     if database.dump_timestamp
                     else ""
                 )
@@ -69,7 +71,7 @@ class Backup:
 
                 if not failed and database.type == DatabaseType.unknown:
                     logging.error(
-                        "> FAILED: Cannot read database type. Please specify via label."
+                        "> FAILED: Cannot resolve database type. Please specify via label."
                     )
                     failed = True
 
@@ -216,19 +218,47 @@ class Backup:
                         )
                     )
 
+                # Cleanup
+                if database.dump_timestamp:
+                    glob_expression = f"{self.DUMP_DIR}/{dump_name_part}_*.*"
+                    files = sorted(glob.glob(glob_expression), reverse=True)
+                    kept_files = 0
+                    if len(files) > 0:
+
+                        for i in range(len(files)):
+                            # Calculate Age
+                            basename = os.path.basename(files[i])
+                            age_regex = re.compile(
+                                r"^.+_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\..+$")
+                            timestamp_str = age_regex.match(basename).group(1)
+                            timestamp = datetime.datetime.strptime(
+                                timestamp_str, '%Y-%m-%d_%H-%M-%S')
+                            delta = now - timestamp
+
+                            # Check if dump file should be deleted
+                            delete = False
+                            if i <= database.retention_min_count - 1:
+                                logging.debug(f"{files[i]} KEEP (min_count)")
+                            elif delta <= database.retention_min_age:
+                                logging.debug(f"{files[i]} KEEP (min_age)")
+                            elif database.retention_max_count > 0 and i > database.retention_max_count - 1:
+                                logging.debug(f"{files[i]} DELETE (max_count)")
+                                delete = True
+                            elif database.retention_max_age.total_seconds() > 0 and delta > database.retention_max_age:
+                                logging.debug(f"{files[i]} DELETE (max_aget)")
+                                delete = True
+                            else:
+                                logging.debug(f"{files[i]} KEEP (default)")
+
+                            if delete:
+                                os.remove(files[i])
+                            else:
+                                kept_files += 1
+
+                    logging.info(
+                        f"> Retention ({database.retention_policy}). Kept {kept_files}/{len(files)} files")
+
             self._docker.remove_backup_network()
-
-            # Cleanup
-            files = sorted(glob.glob(f"{self.DUMP_DIR}/{dump_name_part}_*.*"))
-            if len(files) > 1:
-                # todo: retention policy for keeping multiple dumps
-                deleted_files = 0
-                for i in range(len(files) - 1):
-                    deleted_files += 1
-                    os.remove(files[i])
-
-                if deleted_files > 0:
-                    logging.info(f"> Deleted {deleted_files} old dump files")
 
         # Summarize backup cycle
         full_success = successful_count == container_count

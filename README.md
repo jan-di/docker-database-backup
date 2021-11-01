@@ -44,12 +44,37 @@ Name | Default | Description
 `username` | `root` | Login user
 `password` | (none) | Login password
 `port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type.
-`dump_name` | (none) | Overwrite the base name of the dump file. If not defined, the container name is used.
-`dump_timestamp` | `false` | Append timestamp to dump file (Format: `_YYYY-MM-DD_hh-mm-ss`)
 `compress` | `false` | Compress SQL Dump with gzip
 `compression_level` | `6` | Gzip compression level (1-9)
 `encrypt` | `false` | Encrypt SQL Dump with AES
 `encryption_key` | (none) | Key/Passphrase used to encrypt
+`retention_policy` | `none` | Type of retention policy used to cleanup dump files. Possible values: `none`, `simple`, `all` See below for more info.
+`retention_min_count` | `auto` | Backups below this count will be kept, ignoring the `max` constraints. `auto` sets the value based on `retention_policy`
+`retention_min_age` | `auto` | Backups below this age will be kept, ignoring `max` constraints. See [Tempora Documentation](https://tempora.readthedocs.io/en/latest/#tempora.parse_timedelta) for possible values. `auto` sets the value based on `retention_policy`
+`retention_max_count` | `auto` | Backups above this count will be deleted. `auto` sets the value based on `retention_policy`. Value `0` means no limit.
+`retention_max_age` | `auto` | Backups above this age will be deleted. See `retention_min_age` for possible values. `auto` sets the value based on `retention_policy`. Value `0s` means no limit.
+`dump_name` | (none) | Overwrite the base name of the dump file. If not defined, the container name is used.
+`dump_timestamp` | `auto` | Append timestamp to dump file (Format: `_YYYY-MM-DD_hh-mm-ss`). Default value depends on the used retention policy.
+
+### Database Type
+
+The database type is automatically resolved by checking the image tag. If the image is is not a well known image, you can provide the database type manually. 
+
+Type | Description | Related Options / Default Values
+--- | --- | ---
+`mysql` | MySQL | `port=3306`
+`mariadb` | MariaDB | `port=3306`
+`postgres` | Postgres | `port=5432`
+
+### Retention Policy
+
+You can choose one of the following retention policies for each container. All default values of the retention policy can be overriden manually.
+
+Policy | Description | Related Options / Default Values
+--- | --- | ---
+`none` (default) | Only the newest dump file per database will be kept. Timestamps are deactivated by default. | `dump_timestamps=false`, `retention_min_count=1`, `retention_min_age=0s`, `retention_max_count=1`, `retention_max_age="0s"`
+`simple` | Dump files will be kept/deleted according to count and age. | `dump_timestamps=true`, `retention_min_count=10`, `retention_min_age=0s`, `retention_max_count=0`, `retention_max_age="1 month"`
+`all` | All dump files are being kept. | `dump_timestamps=true`, `retention_min_count=1`, `retention_min_age="0s"`, `retention_max_count=0`, `retention_max_age="0s"`
 
 ## Example
 
@@ -87,4 +112,5 @@ services:
 
 ## Credits
 
-Inspired by [kibatic/docker-mysql-backup](https://github.com/kibatic/docker-mysql-backup)
+- Thanks to [@foorschtbar](https://github.com/foorschtbar) for many feature contributions
+- Inspired by [kibatic/docker-mysql-backup](https://github.com/kibatic/docker-mysql-backup)
