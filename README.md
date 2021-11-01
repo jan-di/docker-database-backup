@@ -13,6 +13,8 @@ Docker Image Tags:
 - `jandi/database-backup` [Docker Hub](https://hub.docker.com/r/jandi/database-backup)
 - `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/database-backup)
 
+Supported Architectures: `amd64`, `arm64`, `arm/v6`, `arm/v7`
+
 ## Service Configuration
 
 Configure the backup service by specifying environment variables:

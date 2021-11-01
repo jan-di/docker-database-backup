@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Custom dump file names now follow the same naming rules as docker containers.
 
+### Removed
+- Dropped Support for i386 Architecture
+
 ## [0.2.0] - 2021-10-04
 ### Added
 - AES Encryption of dump files
