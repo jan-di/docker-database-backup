@@ -153,7 +153,7 @@ class Backup:
                 # Compress pump
                 if not failed and database.compress:
                     logging.debug(
-                        "> Compressing dump (level: {database.compression_level})"
+                        f"> Compressing dump (level: {database.compression_level})"
                     )
                     compressed_dump_file = f"{dump_file}.gz"
 
