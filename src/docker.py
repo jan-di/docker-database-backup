@@ -1,6 +1,7 @@
 import logging
 import os
 import docker
+import base64
 from src import settings
 
 
@@ -47,7 +48,10 @@ class Docker:
         )
 
     def get_network_name(self):
-        return f"{self._config.docker_network_name}_{self._config.instance_id}"
+        encoded_instance_id = base64.b64encode(
+            str.encode(self._config.instance_id)).decode("utf-8", "ignore")
+
+        return f"{self._config.docker_network_name}_{self._config.instance_id}-{encoded_instance_id[:10]}"
 
     def cleanup_old_networks(self):
         network_name = self.get_network_name()

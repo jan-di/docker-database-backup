@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Custom dump file names now follow the same naming rules as docker containers.
+- Add generated base64 suffix to network name to prevent duplicates with docker-compose
 
 ### Removed
 - Dropped Support for i386 Architecture
