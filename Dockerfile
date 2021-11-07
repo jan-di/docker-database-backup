@@ -2,34 +2,29 @@ FROM docker.io/library/python:3.9.7-bullseye AS base
 
 LABEL jan-di.database-backup.instance_id="default"
 
-RUN apt-get update && apt-get install -y \
-    mariadb-client \
-    postgresql-client \ 
-    tzdata \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y mariadb-client postgresql-client tzdata; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*; \
+    mkdir -p /dump
 
 FROM base AS python-deps
 
-RUN set -eux; \
-    pip install pipenv
-
 COPY Pipfile Pipfile.lock  ./
-
 RUN set -eux; \
-    CI=1 PIPENV_VENV_IN_PROJECT=1 PIP_ONLY_BINARY=:all: \
-    pipenv install --deploy --verbose
+    pip install --no-cache-dir pipenv; \
+    CI=1 PIPENV_VENV_IN_PROJECT=1 PIP_ONLY_BINARY=:all: pipenv install --deploy --clear
 
 FROM base
 
 COPY --from=python-deps /.venv /.venv
-ENV PATH="/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
+ENV PATH="/.venv/bin:$PATH"
 
 WORKDIR /app
-
-RUN set -eux; \
-    mkdir -p /dump
-
 COPY . .
 
-ENTRYPOINT [ "python3", "/app/main.py" ]
+CMD [ "python3", "/app/main.py" ]
