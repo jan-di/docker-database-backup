@@ -9,6 +9,12 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build Docker Image (No Cache)",
+            "type": "shell",
+            "command": "docker build --no-cache . -t docker-database-backup",
+            "group": "build",
         }
     ]
 }
