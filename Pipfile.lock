@@ -97,11 +97,11 @@
         },
         "croniter": {
             "hashes": [
-                "sha256:0f97b361fe343301a8f66f852e7d84e4fb7f21379948f71e1bbfe10f5d015fbd",
-                "sha256:a70dfc9d52de9fc1a886128b9148c89dd9e76b67d55f46516ca94d2d73d58219"
+                "sha256:4023e4d18ced979332369964351e8f4f608c1f7c763e146b1d740002c4245247",
+                "sha256:d30dd147d1daec39d015a15b8cceb3069b9780291b9c141e869c32574a8eeacb"
             ],
             "index": "pypi",
-            "version": "==1.0.15"
+            "version": "==1.1.0"
         },
         "cryptography": {
             "hashes": [
@@ -210,6 +210,14 @@
             ],
             "index": "pypi",
             "version": "==2.26.0"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:5c89b1a14a67ac5f0956f1cb0aeb7d1d3f4c8ba4e4e1ab7bf1af4933f9a2f0fe",
+                "sha256:675fcebecb43c32eb930481abf907619137547f4336206e4d673180242e1a278"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==60.2.0"
         },
         "six": {
             "hashes": [
