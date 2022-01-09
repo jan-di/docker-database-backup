@@ -14,11 +14,10 @@ RUN set -eux; \
 
 FROM base AS python-deps
 
-COPY Pipfile Pipfile.lock  ./
+COPY pyproject.toml poetry.toml poetry.lock  ./
 RUN set -eux; \
-    pip install --no-cache-dir pipenv; \
-    CI=1 PIPENV_VENV_IN_PROJECT=1 PIP_NO_CACHE_DIR=true PIP_ONLY_BINARY=:all: pipenv install --deploy --clear
-
+    pip install --no-cache-dir poetry; \
+    poetry install
 FROM base
 
 COPY --from=python-deps /.venv /.venv

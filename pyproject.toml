@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "database-backup"
+version = "0.3.0"
+description = ""
+authors = ["Jan Dittrich <mail@jand.one>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+docker = "^5.0"
+humanize = "^3.13"
+requests = "^2.27"
+pyaescrypt = "^6.0"
+croniter = "^1.1"
+tempora = "^4.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = 'piwheels'
+url = 'https://www.piwheels.org/simple'
+secondary = true
