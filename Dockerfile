@@ -2,8 +2,6 @@ FROM docker.io/library/python:3.9.9-bullseye AS base
 
 LABEL jan-di.database-backup.instance_id="default"
 
-RUN uname -m
-
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1
 
@@ -17,8 +15,12 @@ RUN set -eux; \
 FROM base AS python-deps
 
 COPY pyproject.toml poetry.toml poetry.lock  ./
+
 RUN set -eux; \
+    uname -m; \
     pip install --no-cache-dir poetry; \
+    if [ $(uname -m) = "armv7l" ]; then poetry config repositories.piwheels "https://www.piwheels.org/simple"; fi; \
+    poetry lock --no-update; \
     poetry install
 FROM base
 

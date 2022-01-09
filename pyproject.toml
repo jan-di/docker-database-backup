@@ -19,8 +19,3 @@ tempora = "^4.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[[tool.poetry.source]]
-name = 'piwheels'
-url = 'https://www.piwheels.org/simple'
-secondary = true
