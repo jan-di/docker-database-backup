@@ -2,6 +2,8 @@ FROM docker.io/library/python:3.9.9-bullseye AS base
 
 LABEL jan-di.database-backup.instance_id="default"
 
+RUN uname -m
+
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1
 
