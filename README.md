@@ -1,7 +1,7 @@
 # Docker Database Backup
 
 [![Source](https://badgen.net/badge/icon/Source?icon=github&label)](https://github.com/jan-di/docker-database-backup)
-[![Checks](https://badgen.net/github/checks/jan-di/docker-database-backup)](https://github.com/jan-di/docker-database-backup/actions/workflows/build-docker-image.yml)
+[![Checks](https://badgen.net/github/checks/jan-di/docker-database-backup)](https://github.com/jan-di/docker-database-backup/actions/workflows/build.yml)
 [![Release](https://badgen.net/github/release/jan-di/docker-database-backup/stable)](https://github.com/jan-di/docker-database-backup/releases)
 [![Last Commit](https://badgen.net/github/last-commit/jan-di/docker-database-backup/main)](https://github.com/jan-di/docker-database-backup/commits/main)
 [![License](https://badgen.net/github/license/jan-di/docker-database-backup)](https://github.com/jan-di/docker-database-backup/blob/main/LICENSE)
