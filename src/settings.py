@@ -14,7 +14,7 @@ CONFIG_DEFAULTS = {
     "docker_network_name": "database-backup",
     "docker_target_name": "database-backup-target",
     "instance_id": "default",
-    "healthchecks_io_url": None
+    "healthchecks_io_url": None,
 }
 
 LABEL_DEFAULTS = {
@@ -34,6 +34,7 @@ LABEL_DEFAULTS = {
     "retention_max_age": "auto",  # via retention_policy
     "dump_name": "",
     "dump_timestamp": "auto",  # via retention_policy
+    "grace_time": "10s",
 }
 
 

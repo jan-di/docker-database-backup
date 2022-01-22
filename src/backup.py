@@ -39,7 +39,7 @@ class Backup:
             self._docker.create_backup_network()
 
             for i, container in enumerate(containers):
-                now = datetime.datetime.now()
+                now = datetime.datetime.now(datetime.timezone.utc)
                 database = Database(container, self._global_labels)
                 dump_name_part = (
                     database.dump_name if len(
@@ -52,6 +52,10 @@ class Backup:
                 )
                 dump_file = f"{self.DUMP_DIR}/{dump_name_part}{dump_timestamp_part}.sql"
                 failed = False
+
+                container_started_at = datetime.datetime.fromisoformat(
+                    container.attrs['State']['StartedAt'].partition('.')[0] + '.000000+00:00')
+                container_uptime = now - container_started_at
 
                 logging.info(
                     "[{}/{}] Processing container {} {} ({})".format(
@@ -205,7 +209,9 @@ class Backup:
                     os.chown(
                         dump_file, self._config.dump_uid, self._config.dump_gid
                     )  # pylint: disable=maybe-no-member
+                    # todo catch errors when chowning file
 
+                if not failed:
                     successful_count += 1
                     logging.info(
                         "> SUCCESS. Size: {}{}".format(
@@ -217,6 +223,9 @@ class Backup:
                             else "",
                         )
                     )
+                elif container_uptime < database.grace_time:
+                    successful_count += 1
+                    logging.info("> Ignore failure because of grace time")
 
                 # Cleanup
                 if database.dump_timestamp:
@@ -232,7 +241,7 @@ class Backup:
                                 r"^.+_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\..+$")
                             timestamp_str = age_regex.match(basename).group(1)
                             timestamp = datetime.datetime.strptime(
-                                timestamp_str, '%Y-%m-%d_%H-%M-%S')
+                                timestamp_str, '%Y-%m-%d_%H-%M-%S').replace(tzinfo=datetime.timezone.utc)
                             delta = now - timestamp
 
                             # Check if dump file should be deleted

@@ -109,7 +109,7 @@ class Database:
         self._load_labels(RETENTION_DEFAULTS.get(
             self.retention_policy, {}), True)
 
-        # Other
+        # Other type conversions/calculations
         self.type = DatabaseType[self.type]
         self.port = int(self.port)
         self.compress = distutils.util.strtobool(self.compress)
@@ -122,3 +122,4 @@ class Database:
         self.retention_max_count = max(int(self.retention_max_count), 0)
         self.retention_max_age = tempora.parse_timedelta(
             self.retention_max_age)
+        self.grace_time = tempora.parse_timedelta(self.grace_time)
