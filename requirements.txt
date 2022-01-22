@@ -4,8 +4,6 @@
 #
 #    pip-compile
 #
---extra-index-url https://www.piwheels.org/simple
-
 certifi==2021.10.8
     # via requests
 cffi==1.15.0
