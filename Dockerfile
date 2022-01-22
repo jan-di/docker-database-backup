@@ -14,15 +14,15 @@ RUN set -eux; \
 
 FROM base AS python-deps
 
-COPY Pipfile Pipfile.lock  ./
+COPY requirements.txt ./
+
 RUN set -eux; \
-    pip install --no-cache-dir pipenv; \
-    CI=1 PIPENV_VENV_IN_PROJECT=1 PIP_NO_CACHE_DIR=true PIP_ONLY_BINARY=:all: pipenv install --deploy --clear
+    pip install --no-cache-dir pip-tools; \
+    pip-sync requirements.txt --pip-args '--user --only-binary=:all':
 
 FROM base
 
-COPY --from=python-deps /.venv /.venv
-ENV PATH="/.venv/bin:$PATH"
+COPY --from=python-deps /root/.local /root/.local
 
 WORKDIR /app
 COPY . .
