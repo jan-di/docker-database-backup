@@ -14,18 +14,15 @@ RUN set -eux; \
 
 FROM base AS python-deps
 
-COPY pyproject.toml poetry.toml poetry.lock  ./
+COPY requirements.txt ./
 
 RUN set -eux; \
-    uname -m; \
-    pip install --no-cache-dir poetry; \
-    if [ $(uname -m) = "armv7l" ]; then poetry config repositories.piwheels "https://www.piwheels.org/simple"; fi; \
-    poetry lock --no-update; \
-    poetry install
+    pip install --no-cache-dir pip-tools; \
+    pip-sync requirements.txt --pip-args '--user --only-binary=:all':
+
 FROM base
 
-COPY --from=python-deps /.venv /.venv
-ENV PATH="/.venv/bin:$PATH"
+COPY --from=python-deps /root/.local /root/.local
 
 WORKDIR /app
 COPY . .
