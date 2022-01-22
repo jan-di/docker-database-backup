@@ -1,4 +1,4 @@
-#--extra-index-url https://www.piwheels.org/simple
+--extra-index-url https://www.piwheels.org/simple
 
 docker~=5.0
 humanize~=3.13
