@@ -15,11 +15,12 @@ class Backup:
     DUMP_DIR = "/dump"
     DUMP_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$")
 
-    def __init__(self, config, global_labels, docker, healthcheck):
+    def __init__(self, config, global_labels, docker, healthcheck, metrics):
         self._config = config
         self._global_labels = global_labels
         self._healthcheck = healthcheck
         self._docker = docker
+        self._metrics = metrics
 
     def run(self):
         # Start healthcheck integrations
@@ -271,6 +272,10 @@ class Backup:
 
         # Summarize backup cycle
         full_success = successful_count == container_count
+
+        self._metrics.total_targets = container_count
+        self._metrics.successful_targets = successful_count
+
         if container_count == 0:
             message = "Finished backup cycle. No databases to backup."
             logging.info(message)

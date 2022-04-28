@@ -5,8 +5,8 @@ from src.healthcheck import Healthcheck
 from src.schedule import Schedule
 from src.docker import Docker
 from src.backup import Backup
+from src.metrics import Metrics
 from src import settings
-
 
 # Read config and setup logging
 config, global_labels = settings.read()
@@ -15,10 +15,14 @@ logging.basicConfig(
 )
 logging.info("Starting backup service")
 
+# Initializin Metrics Manager
+metrics = Metrics()
+metrics.start_server()
+
 # Initializing Backup
 docker = Docker(config)
 healthcheck = Healthcheck(config)
-backup = Backup(config, global_labels, docker, healthcheck)
+backup = Backup(config, global_labels, docker, healthcheck, metrics)
 
 # Initializing Scheduler
 schedule = Schedule(config)
