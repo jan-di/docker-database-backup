@@ -9,6 +9,7 @@ import datetime
 import pyAesCrypt
 import humanize
 import re
+import math
 
 
 class Backup:
@@ -25,6 +26,7 @@ class Backup:
     def run(self):
         # Start healthcheck integrations
         self._healthcheck.start("Starting backup cycle.")
+        cycle_start = datetime.datetime.now(datetime.timezone.utc)
 
         # Find available database containers
         containers = self._docker.get_targets(
@@ -38,25 +40,30 @@ class Backup:
                 f"Starting backup cycle with {len(containers)} container(s)..")
 
             self._docker.create_backup_network()
+            self._metrics.init_metrics()
 
             for i, container in enumerate(containers):
-                now = datetime.datetime.now(datetime.timezone.utc)
+                start = datetime.datetime.now(datetime.timezone.utc)
                 database = Database(container, self._global_labels)
                 dump_name_part = (
                     database.dump_name if len(
                         database.dump_name) > 0 else container.name
                 )
                 dump_timestamp_part = (
-                    now.strftime("_%Y-%m-%d_%H-%M-%S")
+                    start.strftime("_%Y-%m-%d_%H-%M-%S")
                     if database.dump_timestamp
                     else ""
                 )
                 dump_file = f"{self.DUMP_DIR}/{dump_name_part}{dump_timestamp_part}.sql"
                 failed = False
+                metric_labels = {
+                    "name": dump_name_part,
+                    "type": database.type.name
+                }
 
                 container_started_at = datetime.datetime.fromisoformat(
                     container.attrs['State']['StartedAt'].partition('.')[0] + '.000000+00:00')
-                container_uptime = now - container_started_at
+                container_uptime = start - container_started_at
 
                 logging.info(
                     "[{}/{}] Processing container {} {} ({})".format(
@@ -151,6 +158,7 @@ class Backup:
 
                 if not failed:
                     dump_size = os.path.getsize(dump_file)
+                    processed_dump_size = dump_size
                     if dump_size == 0:
                         logging.error("> FAILED: Dump file is empty!")
                         failed = True
@@ -243,7 +251,7 @@ class Backup:
                             timestamp_str = age_regex.match(basename).group(1)
                             timestamp = datetime.datetime.strptime(
                                 timestamp_str, '%Y-%m-%d_%H-%M-%S').replace(tzinfo=datetime.timezone.utc)
-                            delta = now - timestamp
+                            delta = start - timestamp
 
                             # Check if dump file should be deleted
                             delete = False
@@ -264,17 +272,37 @@ class Backup:
                                 os.remove(files[i])
                             else:
                                 kept_files += 1
+                else:
+                    # Dummy files to get useful metrics
+                    files = [None]
+                    kept_files = 1
 
                     logging.info(
                         f"> Retention ({database.retention_policy}). Kept {kept_files}/{len(files)} files")
+
+                end = datetime.datetime.now(datetime.timezone.utc)
+                duration = end - start
+
+                # Add database specific metrics
+                if "dump_size" in locals():
+                    self._metrics.add_multi_value(
+                        'backup_dump_raw_size', metric_labels, dump_size)
+                if "processed_dump_size" in locals():
+                    self._metrics.add_multi_value(
+                        'backup_dump_size', metric_labels, processed_dump_size)
+                self._metrics.add_multi_value(
+                    'backup_status', metric_labels, int(not failed))
+                self._metrics.add_multi_value(
+                    'backup_duration', metric_labels, math.ceil(duration.total_seconds() * 1000))
+                self._metrics.add_multi_value(
+                    'backup_retention_kept_files', metric_labels, kept_files)
+                self._metrics.add_multi_value(
+                    'backup_retention_checked_files', metric_labels, len(files))
 
             self._docker.remove_backup_network()
 
         # Summarize backup cycle
         full_success = successful_count == container_count
-
-        self._metrics.total_targets = container_count
-        self._metrics.successful_targets = successful_count
 
         if container_count == 0:
             message = "Finished backup cycle. No databases to backup."
@@ -287,3 +315,14 @@ class Backup:
                 self._healthcheck.success(message)
             else:
                 self._healthcheck.fail(message)
+
+        cycle_end = datetime.datetime.now(datetime.timezone.utc)
+        cycle_duration = cycle_end - cycle_start
+
+        # Set general metrics
+        self._metrics.set_single_value('targets', container_count)
+        self._metrics.set_single_value(
+            'successful_targets', successful_count)
+        self._metrics.set_single_value(
+            'cycle_duration', math.ceil(cycle_duration.total_seconds() * 1000))
+        self._metrics.flush_metrics()

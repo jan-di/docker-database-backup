@@ -8,7 +8,8 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "env": {
-                "INSTANCE_ID": "devcontainer"
+                "INSTANCE_ID": "devcontainer",
+                "OPENMETRICS_ENABLE": "true"
             },
             "envFile": "${workspaceFolder}/.vscode/.env"
         }

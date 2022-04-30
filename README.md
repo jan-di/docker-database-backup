@@ -28,6 +28,8 @@ Name                    | Default                   | Description
 `DUMP_UID`              | `-1`                      | UID of dump files. `-1` means default (docker executing user)
 `DUMP_GID`              | `-1`                      | GID of dump files. `-1` means default (docker executing user)
 `HEALTHCHECKS_IO_URL`   | (none)                    | Base Url for [Healthchecks.io](https://healthchecks.io) integration
+`OPENMETRICS_ENABLE`    | `false`                   | Enable openmetrics http endpoint
+`OPENMETRICS_PORT`      | `9639`                    | Port of openmetrics http endpoint
 `DEBUG`                 | `false`                   | More verbose output for debugging
 `DOCKER_NETWORK_NAME`   | `database-backup`         | Prefix for the name of the internal network, that is used to connect to the database containers.
 `DOCKER_TARGET_NAME`    | `database-backup-target`  | Prefix for the name of the internal hostname, that is used to connect to the database containers.

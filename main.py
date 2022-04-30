@@ -15,12 +15,9 @@ logging.basicConfig(
 )
 logging.info("Starting backup service")
 
-# Initializin Metrics Manager
-metrics = Metrics()
-metrics.start_server()
-
-# Initializing Backup
+# Initializin Backup
 docker = Docker(config)
+metrics = Metrics(config)
 healthcheck = Healthcheck(config)
 backup = Backup(config, global_labels, docker, healthcheck, metrics)
 

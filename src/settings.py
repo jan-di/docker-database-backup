@@ -15,6 +15,8 @@ CONFIG_DEFAULTS = {
     "docker_target_name": "database-backup-target",
     "instance_id": "default",
     "healthchecks_io_url": None,
+    "openmetrics_enable": "false",
+    "openmetrics_port": "9639"
 }
 
 LABEL_DEFAULTS = {
@@ -56,6 +58,9 @@ class Config:
         self.instance_id = values["instance_id"]
 
         self.healthchecks_io_url = values["healthchecks_io_url"]
+
+        self.openmetrics_enable = _convert_bool(values["openmetrics_enable"])
+        self.openmetrics_port = int(values["openmetrics_port"])
 
 
 def read():

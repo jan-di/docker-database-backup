@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Open Metrics/Prometheus endpoint
 - Add grace time options to ignore errors on newly started targets
 
 ### Changed
