@@ -28,9 +28,26 @@ class Backup:
         self._healthcheck.start("Starting backup cycle.")
         cycle_start = datetime.datetime.now(datetime.timezone.utc)
 
+
         # Find available database containers
         containers = self._docker.get_targets(
             f"{settings.LABEL_PREFIX}enable=true")
+
+        # Process only container with the name in the whitelist
+        if self._config.whitelist is not None:
+            container_whitelist = [x.strip() for x in self._config.whitelist.split(',') if x]
+            if len(container_whitelist) > 0:
+                logging.info(f"Container whitelist is active! Only these names are processed: {container_whitelist}")
+                # Removes all containers from the list, which are not included in the filter
+                containers = [x for x in containers if x.name in container_whitelist]
+
+        # Process all container, but not with the name in the blacklist
+        if self._config.blacklist is not None:   
+            container_blacklist = [x.strip() for x in self._config.blacklist.split(',') if x]
+            if len(container_blacklist) > 0:
+                logging.info(f"Container blacklist is active! The following names will be not processed: {container_blacklist}")
+                # Removes all containers from the list, which are not included in the filter
+                containers = [x for x in containers if x.name not in container_blacklist]
 
         container_count = len(containers)
         successful_count = 0

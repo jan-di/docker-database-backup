@@ -16,7 +16,9 @@ CONFIG_DEFAULTS = {
     "instance_id": "default",
     "healthchecks_io_url": None,
     "openmetrics_enable": "false",
-    "openmetrics_port": "9639"
+    "openmetrics_port": "9639",
+    "whitelist": None,
+    "blacklist": None,
 }
 
 LABEL_DEFAULTS = {
@@ -61,6 +63,9 @@ class Config:
 
         self.openmetrics_enable = _convert_bool(values["openmetrics_enable"])
         self.openmetrics_port = int(values["openmetrics_port"])
+
+        self.whitelist = values["whitelist"]
+        self.blacklist = values["blacklist"]
 
 
 def read():
