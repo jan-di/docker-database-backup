@@ -1,2 +1,4 @@
 *.pyc
 .vscode/.env
+docker-compose.yml
+dump/
