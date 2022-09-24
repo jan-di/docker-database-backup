@@ -31,8 +31,8 @@ Configure the backup service by specifying environment variables:
 | `HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration |
 | `OPENMETRICS_ENABLE` | `false` | Enable openmetrics http endpoint |
 | `OPENMETRICS_PORT` | `9639` | Port of openmetrics http endpoint |
-| `WHITELIST` | (none) | A comma-separated list of container names. Only the containers that appear in the list will be processed. Example: `app-db, database2`. |
-| `BLACKLIST` | (none) | A comma-separated list of container names. Only the containers that NOT appear in the list will be processed. Example: `app-db`. |
+| `WHITELIST` | (none) | A comma-separated list of container names. If defined, only containers that appear in the list will be processed. Example: `app-db, database2`. |
+| `BLACKLIST` | (none) | A comma-separated list of container names. If defined, only containers that NOT appear in the list will be processed. Example: `app-db`. |
 | `DEBUG` | `false` | More verbose output for debugging |
 | `DOCKER_NETWORK_NAME` | `database-backup` | Prefix for the name of the internal network, that is used to connect to the database containers. |
 | `DOCKER_TARGET_NAME` | `database-backup-target` | Prefix for the name of the internal hostname, that is used to connect to the database containers. |
@@ -91,34 +91,30 @@ You can choose one of the following retention policies for each container. All d
 Example docker-compose.yml:
 
 ```yml
-version: "3.8"
+db-backup: # backup service
+  image: ghcr.io/jan-di/database-backup
+  environment:
+    - TZ=Europe/Berlin
+    - SCHEDULE=600
+    - GLOBAL_PASSWORD=secret-password
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
 
-services:
- db-backup: # backup service
- image: ghcr.io/jan-di/database-backup
- environment:
- - TZ=Europe/Berlin
- - SCHEDULE=0 */12 * * *
- - GLOBAL_PASSWORD=secret-password
- volumes:
- - /var/run/docker.sock:/var/run/docker.sock
- - ./dump:/dump
+database1: # well known database image
+  image: mariadb:latest
+  environment:
+    - MYSQL_ROOT_PASSWORD=secret-password
+  labels:
+    - jan-di.database-backup.enable=true
 
- database1: # well known database image
- image: mariadb:latest
- environment:
- - MYSQL_ROOT_PASSWORD=secret-password
- labels:
- - jan-di.database-backup.enable=true
-
- database2: # custom database image
- image: user/my-database:latest
- environment:
- - DB_PASSWORD=secret-password
- labels:
- - jan-di.database-backup.enable=true
- - jan-di.database-backup.type=postgres
- - jan-di.database-backup.password=other-password
+database2: # custom database image
+  image: user/my-database:latest
+  environment:
+    - DB_PASSWORD=secret-password
+  labels:
+    - jan-di.database-backup.enable=true
+    - jan-di.database-backup.type=postgres
+    - jan-di.database-backup.password=other-password
 ```
 
 ## Credits
