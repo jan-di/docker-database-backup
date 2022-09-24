@@ -91,7 +91,10 @@ You can choose one of the following retention policies for each container. All d
 Example docker-compose.yml:
 
 ```yml
-db-backup: # backup service
+version: '3.8'
+
+services:
+  db-backup: # backup service
   image: ghcr.io/jan-di/database-backup
   environment:
     - TZ=Europe/Berlin
@@ -100,14 +103,14 @@ db-backup: # backup service
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
 
-database1: # well known database image
+  database1: # well known database image
   image: mariadb:latest
   environment:
     - MYSQL_ROOT_PASSWORD=secret-password
   labels:
     - jan-di.database-backup.enable=true
 
-database2: # custom database image
+  database2: # custom database image
   image: user/my-database:latest
   environment:
     - DB_PASSWORD=secret-password
