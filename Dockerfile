@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.9.15-bullseye AS base
+FROM docker.io/library/python:3.9.15-bullseye 
 
 LABEL jan-di.database-backup.instance_id="default"
 
@@ -12,17 +12,11 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*; \
     mkdir -p /dump
 
-FROM base AS python-deps
-
 COPY requirements.txt ./
 
 RUN set -eux; \
     pip install --no-cache-dir pip-tools; \
     pip-sync requirements.txt --pip-args '--user --only-binary=:all':
-
-FROM base
-
-COPY --from=python-deps /root/.local /root/.local
 
 WORKDIR /app
 COPY . .
