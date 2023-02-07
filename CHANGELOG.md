@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Crash when metrics are enabled and no targets are found.
+
 ## [0.5.0] - 2023-02-07
 ### Added
 - Add Support for White-/Blacklist (@foorschtbar)

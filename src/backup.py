@@ -28,7 +28,6 @@ class Backup:
         self._healthcheck.start("Starting backup cycle.")
         cycle_start = datetime.datetime.now(datetime.timezone.utc)
 
-
         # Find available database containers
         containers = self._docker.get_targets(
             f"{settings.LABEL_PREFIX}enable=true")
@@ -51,13 +50,13 @@ class Backup:
 
         container_count = len(containers)
         successful_count = 0
+        self._metrics.init_metrics()
 
         if container_count:
             logging.info(
                 f"Starting backup cycle with {len(containers)} container(s)..")
 
             self._docker.create_backup_network()
-            self._metrics.init_metrics()
 
             for i, container in enumerate(containers):
                 start = datetime.datetime.now(datetime.timezone.utc)
