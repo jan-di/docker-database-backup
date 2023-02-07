@@ -7,8 +7,9 @@
 
 ## Debugging
 
+- (optional) Start test databases. Example: `docker compose -f tests/mariadb.docker-compose.yml up`
 - Debug via Visual Studio Code Launchconfig
-- Custom Environment Variables can be put into `.vscode/.env`
+    - Custom Environment Variables can be put into `.vscode/.env`
 
 ## Test
 

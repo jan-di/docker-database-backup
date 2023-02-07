@@ -1,0 +1,43 @@
+x-mariadb:
+  &x-mariadb
+  environment:
+    MARIADB_ROOT_PASSWORD: secret
+  labels:
+    - jan-di.database-backup.enable=true
+    - jan-di.database-backup.type=mariadb
+    - jan-di.database-backup.password=secret
+
+services:
+  # All currently supported versions. See https://endoflife.date/mariadb
+
+  docker-database-backup-mariadb-10-3:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.3
+
+  docker-database-backup-mariadb-10-4:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.4
+
+  docker-database-backup-mariadb-10-5:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.5
+
+  docker-database-backup-mariadb-10-6:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.6
+
+  docker-database-backup-mariadb-10-7:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.7
+
+  docker-database-backup-mariadb-10-8:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.8
+
+  docker-database-backup-mariadb-10-9:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.9
+
+  docker-database-backup-mariadb-10-10:
+    <<: *x-mariadb
+    image: docker.io/mariadb:10.10

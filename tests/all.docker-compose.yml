@@ -1,0 +1,12 @@
+services:
+  db-encrypt-compress:
+    image: docker.io/mariadb:10.10
+    environment:
+      MARIADB_ROOT_PASSWORD: secret
+    labels:
+      - jan-di.database-backup.enable=true
+      - jan-di.database-backup.type=mariadb
+      - jan-di.database-backup.password=secret
+      - jan-di.database-backup.compress=true
+      - jan-di.database-backup.encrypt=true
+      - jan-di.database-backup.encryption_key=secretkey

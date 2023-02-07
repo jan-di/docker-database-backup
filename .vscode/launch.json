@@ -9,7 +9,10 @@
             "console": "integratedTerminal",
             "env": {
                 "INSTANCE_ID": "devcontainer",
-                "OPENMETRICS_ENABLE": "true"
+                "OPENMETRICS_ENABLE": "true",
+                "DUMP_UID": "1000",
+                "DUMP_GID": "1000"
+
             },
             "envFile": "${workspaceFolder}/.vscode/.env"
         }

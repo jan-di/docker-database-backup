@@ -95,29 +95,29 @@ version: '3.8'
 
 services:
   db-backup: # backup service
-  image: ghcr.io/jan-di/database-backup
-  environment:
-    - TZ=Europe/Berlin
-    - SCHEDULE=600
-    - GLOBAL_PASSWORD=secret-password
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
+    image: ghcr.io/jan-di/database-backup
+    environment:
+      - TZ=Europe/Berlin
+      - SCHEDULE=600
+      - GLOBAL_PASSWORD=secret-password
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   database1: # well known database image
-  image: mariadb:latest
-  environment:
-    - MYSQL_ROOT_PASSWORD=secret-password
-  labels:
-    - jan-di.database-backup.enable=true
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret-password
+    labels:
+      - jan-di.database-backup.enable=true
 
   database2: # custom database image
-  image: user/my-database:latest
-  environment:
-    - DB_PASSWORD=secret-password
-  labels:
-    - jan-di.database-backup.enable=true
-    - jan-di.database-backup.type=postgres
-    - jan-di.database-backup.password=other-password
+    image: user/my-database:latest
+    environment:
+      - DB_PASSWORD=secret-password
+    labels:
+      - jan-di.database-backup.enable=true
+      - jan-di.database-backup.type=postgres
+      - jan-di.database-backup.password=other-password
 ```
 
 ## Credits
