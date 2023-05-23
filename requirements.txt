@@ -36,7 +36,7 @@ python-dateutil==2.8.2
     # via croniter
 pytz==2022.7.1
     # via tempora
-requests==2.30.0
+requests==2.31.0
     # via
     #   -r requirements.in
     #   docker
