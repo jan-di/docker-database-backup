@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.9.16-bullseye 
+FROM docker.io/library/python:3.9.17-bullseye 
 
 LABEL jan-di.database-backup.instance_id="default"
 
