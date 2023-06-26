@@ -28,7 +28,7 @@ more-itertools==9.0.0
     # via jaraco-functools
 packaging==23.0
     # via docker
-pyaescrypt==6.0.0
+pyaescrypt==6.1.0
     # via -r requirements.in
 pycparser==2.21
     # via cffi
