@@ -5,4 +5,4 @@ humanize~=4.6
 requests~=2.31
 pyaescrypt~=6.0
 croniter~=1.4
-tempora~=5.3
+tempora~=5.5
