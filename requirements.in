@@ -1,6 +1,6 @@
 --extra-index-url https://www.piwheels.org/simple
 
-docker~=6.1
+docker~=7.0
 humanize~=4.9
 requests~=2.31
 pyaescrypt~=6.1
