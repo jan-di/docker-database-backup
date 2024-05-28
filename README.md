@@ -13,7 +13,7 @@ Docker Image Tags:
 - `docker.io/jandi/database-backup` [Docker Hub](https://hub.docker.com/r/jandi/database-backup)
 - `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/database-backup)
 
-Supported Architectures: `amd64`, `arm64`, `arm/v6`, `arm/v7`
+Supported Architectures: `amd64`, `arm64`
 
 ## Service Configuration
 

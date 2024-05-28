@@ -10,9 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when metrics are enabled and no targets are found.
 
 ### Changed
+
 - Updated dependencies
 - Use upstream apt repository of postgresql instead of the debian one.
 - Switch from debian bullseye to debian bookworm
+
+### Removed
+
+- Support for 32bit arm architectures (arm/v6, arm/v7, armhf)
 
 ## [0.5.0] - 2023-02-07
 ### Added
