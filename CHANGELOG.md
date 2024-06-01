@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2024-06-01
+### Added
+
 ### Fixed
 - Crash when metrics are enabled and no targets are found.
 
@@ -18,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Support for 32bit arm architectures (arm/v6, arm/v7, armhf)
+- **Breaking** Support for 32bit arm architectures (arm/v6, arm/v7, armhf)
 
 ## [0.5.0] - 2023-02-07
 ### Added
