@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated dependencies
 - Use upstream apt repository of postgresql instead of the debian one.
 - Switch from debian bullseye to debian bookworm
+- Switch from python 3.9 to python 3.12
 
 ### Removed
 

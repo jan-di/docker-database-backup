@@ -1,5 +1,4 @@
-x-mariadb:
-  &x-mariadb
+x-mariadb: &x-mariadb
   environment:
     MARIADB_ROOT_PASSWORD: secret
   labels:
@@ -9,10 +8,6 @@ x-mariadb:
 
 services:
   # All currently supported versions. See https://endoflife.date/mariadb
-
-  docker-database-backup-mariadb-10-3:
-    <<: *x-mariadb
-    image: docker.io/mariadb:10.3
 
   docker-database-backup-mariadb-10-4:
     <<: *x-mariadb
@@ -26,18 +21,22 @@ services:
     <<: *x-mariadb
     image: docker.io/mariadb:10.6
 
-  docker-database-backup-mariadb-10-7:
+  docker-database-backup-mariadb-10-11:
     <<: *x-mariadb
-    image: docker.io/mariadb:10.7
+    image: docker.io/mariadb:10.11
 
-  docker-database-backup-mariadb-10-8:
+  docker-database-backup-mariadb-11-1:
     <<: *x-mariadb
-    image: docker.io/mariadb:10.8
+    image: docker.io/mariadb:11.1
 
-  docker-database-backup-mariadb-10-9:
+  docker-database-backup-mariadb-11-2:
     <<: *x-mariadb
-    image: docker.io/mariadb:10.9
+    image: docker.io/mariadb:11.2
 
-  docker-database-backup-mariadb-10-10:
+  docker-database-backup-mariadb-11-3:
     <<: *x-mariadb
-    image: docker.io/mariadb:10.10
+    image: docker.io/mariadb:11.3
+
+  docker-database-backup-mariadb-11-4:
+    <<: *x-mariadb
+    image: docker.io/mariadb:11.4

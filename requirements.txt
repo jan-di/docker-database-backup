@@ -14,7 +14,7 @@ croniter==2.0.5
     # via -r requirements.in
 cryptography==42.0.7
     # via pyaescrypt
-docker==6.1.3
+docker==7.1.0
     # via -r requirements.in
 humanize==4.9.0
     # via -r requirements.in
@@ -24,8 +24,6 @@ jaraco-functools==4.0.1
     # via tempora
 more-itertools==10.2.0
     # via jaraco-functools
-packaging==24.0
-    # via docker
 pyaescrypt==6.1.1
     # via -r requirements.in
 pycparser==2.22
@@ -48,5 +46,3 @@ urllib3==2.2.1
     # via
     #   docker
     #   requests
-websocket-client==1.8.0
-    # via docker

@@ -1,6 +1,6 @@
 services:
   db-encrypt-compress:
-    image: docker.io/mariadb:10.10
+    image: docker.io/mariadb:11.14 # current LTS
     environment:
       MARIADB_ROOT_PASSWORD: secret
     labels:

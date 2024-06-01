@@ -2,7 +2,9 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/python-3
 {
 	"name": "Python 3",
-	"runArgs": ["--init"],
+	"runArgs": [
+		"--init"
+	],
 	"build": {
 		"dockerfile": "Dockerfile",
 		"context": "..",
@@ -15,12 +17,11 @@
 			"NODE_VERSION": "none"
 		}
 	},
-
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"editor.formatOnSave":true,
+				"editor.formatOnSave": true,
 				"python.pythonPath": "/usr/local/bin/python",
 				"python.languageServer": "Pylance",
 				"python.linting.enabled": true,
@@ -46,16 +47,13 @@
 			],
 		}
 	},
-
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
-
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "pip-sync",
-
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
-	}
+	},
+	"remoteUser": "root"
 }
