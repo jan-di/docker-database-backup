@@ -1,0 +1,31 @@
+x-postgres: &x-postgres
+  environment:
+    POSTGRES_PASSWORD: secret
+  labels:
+    - jan-di.database-backup.enable=true
+    - jan-di.database-backup.type=postgres
+    - jan-di.database-backup.username=postgres
+    - jan-di.database-backup.password=secret
+
+services:
+  # All currently supported versions. See https://endoflife.date/postgresql
+
+  docker-database-backup-postgres-16-3:
+    <<: *x-postgres
+    image: docker.io/postgres:16.3
+
+  docker-database-backup-postgres-15-7:
+    <<: *x-postgres
+    image: docker.io/postgres:15.7
+
+  docker-database-backup-postgres-14-12:
+    <<: *x-postgres
+    image: docker.io/postgres:14.12
+
+  docker-database-backup-postgres-13-15:
+    <<: *x-postgres
+    image: docker.io/postgres:13.15
+
+  docker-database-backup-postgres-12-19:
+    <<: *x-postgres
+    image: docker.io/postgres:12.19

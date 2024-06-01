@@ -14,6 +14,11 @@ Docker Image Tags:
 - `ghcr.io/jan-di/database-backup` [GitHub Container Registry](https://github.com/jan-di/docker-database-backup/pkgs/container/database-backup)
 
 Supported Architectures: `amd64`, `arm64`
+Supported Databases:
+
+- Postgres (<= 16)
+- MariaDB
+- MySQL
 
 ## Service Configuration
 
