@@ -31,16 +31,14 @@ pycparser==2.22
 python-dateutil==2.9.0.post0
     # via croniter
 pytz==2024.1
-    # via
-    #   croniter
-    #   tempora
+    # via croniter
 requests==2.32.3
     # via
     #   -r requirements.in
     #   docker
 six==1.16.0
     # via python-dateutil
-tempora==5.5.1
+tempora==5.6.0
     # via -r requirements.in
 urllib3==2.2.1
     # via
