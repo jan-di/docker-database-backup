@@ -16,7 +16,7 @@ cryptography==42.0.7
     # via pyaescrypt
 docker==7.1.0
     # via -r requirements.in
-humanize==4.9.0
+humanize==4.10.0
     # via -r requirements.in
 idna==3.7
     # via requests
