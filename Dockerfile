@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.12.3-bookworm
+FROM docker.io/library/python:3.12.5-bookworm
 
 LABEL jan-di.database-backup.instance_id="default"
 
