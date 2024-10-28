@@ -10,7 +10,7 @@ cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-croniter==2.0.7
+croniter==3.0.4
     # via -r requirements.in
 cryptography==42.0.7
     # via pyaescrypt
