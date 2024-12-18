@@ -2,5 +2,5 @@ docker~=7.1
 humanize~=4.10
 requests~=2.32
 pyaescrypt~=6.1
-croniter~=2.0
+croniter~=6.0
 tempora~=5.6
