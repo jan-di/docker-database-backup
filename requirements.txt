@@ -29,7 +29,9 @@ pyaescrypt==6.1.1
 pycparser==2.22
     # via cffi
 python-dateutil==2.9.0.post0
-    # via croniter
+    # via
+    #   croniter
+    #   tempora
 pytz==2024.1
     # via croniter
 requests==2.32.3
@@ -38,7 +40,7 @@ requests==2.32.3
     #   docker
 six==1.16.0
     # via python-dateutil
-tempora==5.6.0
+tempora==5.8.0
     # via -r requirements.in
 urllib3==2.2.1
     # via
