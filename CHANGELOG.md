@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-01-07
+### Added
+
+### Fixed
+
+### Changed
+
+- Updated dependencies
+- Switch from debian bookworm to debian trixie
+- Switch from python 3.12 to python 3.14
+
+### Removed
+
 ## [1.0.0] - 2024-06-01
 ### Added
 
