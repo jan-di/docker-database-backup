@@ -6,7 +6,7 @@ LABEL jan-di.database-backup.instance_id="default"
 RUN set -eu; \
     mkdir -p /etc/apt/keyrings; \
     wget --quiet -O /etc/apt/keyrings/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc; \
-    sh -c 'echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    sh -c 'echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release --codename --short)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1
