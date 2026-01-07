@@ -1,12 +1,10 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/python-3
 {
-	"name": "Python 3",
-	// "runArgs": [
-	// 	"--init"
-	// ],
+	"name": "Docker Database Backup",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile",
+		"context": "."
 	},
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
@@ -38,15 +36,12 @@
 			],
 		}
 	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip-sync",
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"postCreateCommand": "pip-sync",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
 			"moby": "false"
 		}
 	},
-	// "remoteUser": "root"
+	// root required for pip-sync to install packages globally
+	"remoteUser": "root"
 }
