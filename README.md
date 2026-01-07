@@ -16,7 +16,7 @@ Docker Image Tags:
 Supported Architectures: `amd64`, `arm64`
 Supported Databases:
 
-- Postgres (<= 16)
+- Postgres (<= 18)
 - MariaDB
 - MySQL
 
