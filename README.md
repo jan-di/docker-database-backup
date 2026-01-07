@@ -106,6 +106,7 @@ services:
       - SCHEDULE=600
       - GLOBAL_PASSWORD=secret-password
     volumes:
+      - /path/to/dump:/dump
       - /var/run/docker.sock:/var/run/docker.sock
 
   database1: # well known database image
@@ -124,6 +125,15 @@ services:
       - jan-di.database-backup.type=postgres
       - jan-di.database-backup.password=other-password
 ```
+
+## Decryption
+
+To decrypt dump files that were encrypted with this service, you can use the following command:
+
+```bash
+docker run --rm -v /path/to/dump:/dump ghcr.io/jan-di/database-backup decrypt.py /dump/encrypted-dump.sql.aes /dump/decrypted-dump.sql your-encryption-key
+```
+
 
 ## Credits
 
