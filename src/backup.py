@@ -207,7 +207,7 @@ class Backup:
                     logging.debug("> Encrypting dump")
                     encrypted_dump_file = f"{dump_file}.aes"
 
-                    if database.encryption_key is None:
+                    if not database.encryption_key:
                         logging.error(
                             "> FAILED: No encryption key specified!")
                         failed = True
