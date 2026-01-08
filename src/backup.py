@@ -133,6 +133,7 @@ class Backup:
                                     f" --ignore-database=mysql"
                                     f" --ignore-database=information_schema"
                                     f" --ignore-database=performance_schema"
+                                    f' {"--skip-ssl" if database.skip_ssl else ""}'
                                     f' > "{dump_file}"'
                                 ),
                                 shell=True,

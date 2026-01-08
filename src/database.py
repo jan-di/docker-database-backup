@@ -112,6 +112,7 @@ class Database:
         # Other type conversions/calculations
         self.type = DatabaseType[self.type]
         self.port = int(self.port)
+        self.skip_ssl = distutils.util.strtobool(self.skip_ssl)
         self.compress = distutils.util.strtobool(self.compress)
         self.compression_level = int(self.compression_level)
         self.encrypt = distutils.util.strtobool(self.encrypt)

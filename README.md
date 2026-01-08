@@ -57,6 +57,7 @@ Configure each database container by specifying labels. Every label must be pref
 | `username` | `root` | Login user |
 | `password` | (none) | Login password |
 | `port` | `auto` | Port (inside container). Possible values: `auto` or a valid port number. Auto gets the default port corresponding to the type. |
+| `skip_ssl` | `true` | Disable implicit SSL/TLS connection MySQL/MariaDB server |
 | `compress` | `false` | Compress SQL Dump with gzip |
 | `compression_level` | `6` | Gzip compression level (1-9) |
 | `encrypt` | `false` | Encrypt SQL Dump with AES |
