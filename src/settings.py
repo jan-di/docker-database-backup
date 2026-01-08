@@ -27,6 +27,7 @@ LABEL_DEFAULTS = {
     "password": "",
     "type": "auto",  # via image tag
     "port": "auto",  # via type
+    "skip_ssl": "true",
     "compress": "false",
     "compression_level": "6",
     "encrypt": "false",
