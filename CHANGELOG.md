@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-01-08
+
 ### Added
 - Decryption script and instructions in README
 - Option to disable implicit SSL/TLS connection MySQL/MariaDB server (default: enabled)
@@ -18,8 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated dependencies
 - Switch from debian bookworm to debian trixie
 - Switch from python 3.12 to python 3.14
-
-### Removed
 
 ## [1.0.0] - 2024-06-01
 ### Added
