@@ -4,12 +4,16 @@
 #
 #    pip-compile
 #
+annotated-doc==0.0.4
+    # via typer
 certifi==2026.1.4
     # via requests
 cffi==2.0.0
     # via cryptography
 charset-normalizer==3.4.4
     # via requests
+click==8.3.3
+    # via typer
 croniter==6.0.0
     # via -r requirements.in
 cryptography==46.0.3
@@ -20,14 +24,33 @@ humanize==4.15.0
     # via -r requirements.in
 idna==3.11
     # via requests
-jaraco-functools==4.4.0
+jaraco-collections==5.2.1
     # via tempora
+jaraco-context==6.1.2
+    # via
+    #   jaraco-text
+    #   tempora
+jaraco-functools==4.4.0
+    # via
+    #   jaraco-text
+    #   tempora
+jaraco-text==4.2.0
+    # via jaraco-collections
+markdown-it-py==4.0.0
+    # via rich
+mdurl==0.1.2
+    # via markdown-it-py
 more-itertools==10.8.0
-    # via jaraco-functools
+    # via
+    #   jaraco-functools
+    #   jaraco-text
+    #   tempora
 pyaescrypt==6.1.1
     # via -r requirements.in
 pycparser==2.23
     # via cffi
+pygments==2.20.0
+    # via rich
 python-dateutil==2.9.0.post0
     # via
     #   croniter
@@ -38,10 +61,18 @@ requests==2.32.5
     # via
     #   -r requirements.in
     #   docker
+rich==15.0.0
+    # via typer
+shellingham==1.5.4
+    # via typer
 six==1.17.0
     # via python-dateutil
-tempora==5.8.1
+tempora==5.9.0
     # via -r requirements.in
+typer==0.25.1
+    # via typer-slim
+typer-slim==0.24.0
+    # via jaraco-text
 urllib3==2.6.3
     # via
     #   docker
