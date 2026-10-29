@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-29
+
 ### Changed
 - Switch from python 3.14 to python 3.15
 - Update python dependencies
