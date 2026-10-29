@@ -1,6 +1,5 @@
 from enum import Enum
 import re
-import distutils.util
 import tempora
 
 from . import settings
@@ -112,16 +111,16 @@ class Database:
         # Other type conversions/calculations
         self.type = DatabaseType[self.type]
         self.port = int(self.port)
-        self.skip_ssl = distutils.util.strtobool(self.skip_ssl)
-        self.compress = distutils.util.strtobool(self.compress)
+        self.skip_ssl = settings.str_to_bool(self.skip_ssl)
+        self.compress = settings.str_to_bool(self.compress)
         self.compression_algorithm = self.compression_algorithm.lower()
         # `compression_level` is a backwards-compatible alias for `gzip_compression_level`
         if self.compression_level != "auto":
             self.gzip_compression_level = self.compression_level
         self.gzip_compression_level = int(self.gzip_compression_level)
         self.zstd_compression_level = int(self.zstd_compression_level)
-        self.encrypt = distutils.util.strtobool(self.encrypt)
-        self.dump_timestamp = distutils.util.strtobool(self.dump_timestamp)
+        self.encrypt = settings.str_to_bool(self.encrypt)
+        self.dump_timestamp = settings.str_to_bool(self.dump_timestamp)
         self.retention_min_count = max(int(self.retention_min_count), 1)
         self.retention_min_age = tempora.parse_timedelta(
             self.retention_min_age)

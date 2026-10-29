@@ -1,6 +1,5 @@
 import logging
 import os
-import distutils.util
 
 LABEL_PREFIX = "jan-di.database-backup."
 
@@ -93,8 +92,17 @@ def _create_env_name(name, prefix=""):
     return "{}{}".format(prefix, name).upper().replace(".", "_")
 
 
+def str_to_bool(value):
+    value = value.lower()
+    if value in ("y", "yes", "t", "true", "on", "1"):
+        return True
+    if value in ("n", "no", "f", "false", "off", "0"):
+        return False
+    raise ValueError("invalid truth value {!r}".format(value))
+
+
 def _convert_bool(value, nullable=False):
     if nullable:
-        return distutils.util.strtobool(value) if value is not None else None
+        return str_to_bool(value) if value is not None else None
     else:
-        return distutils.util.strtobool(value)
+        return str_to_bool(value)

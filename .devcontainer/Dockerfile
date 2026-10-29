@@ -1,5 +1,5 @@
 # https://github.com/devcontainers/images/tree/main/src/python
-FROM mcr.microsoft.com/vscode/devcontainers/python:3-3.14-trixie
+FROM mcr.microsoft.com/vscode/devcontainers/python:3-3.15-trixie
 
 # Add postgresql repository
 RUN set -eu; \

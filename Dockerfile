@@ -1,4 +1,6 @@
-FROM docker.io/library/python:3.14-trixie
+# syntax=docker.io/docker/dockerfile:1
+
+FROM docker.io/library/python:3.15-trixie
 
 LABEL jan-di.database-backup.instance_id="default"
 
@@ -14,6 +16,7 @@ ENV PYTHONFAULTHANDLER=1 \
 # Install apt packages
 RUN set -eux; \
     apt-get update; \
+    apt-get upgrade -y; \
     apt-get install -y mariadb-client postgresql-client-18 tzdata zstd; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*; \

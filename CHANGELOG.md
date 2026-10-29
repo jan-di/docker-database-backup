@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Switch from python 3.14 to python 3.15
+- Update python dependencies
+
+### Fixed
+- Remove usage of `distutils`, which is no longer available in recent python versions
+
 ## [1.2.0] - 2026-09-10
 
 ### Added
