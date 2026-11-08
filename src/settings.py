@@ -16,6 +16,7 @@ CONFIG_DEFAULTS = {
     "healthchecks_io_url": None,
     "openmetrics_enable": "false",
     "openmetrics_port": "9639",
+    "openmetrics_token": None,
     "whitelist": None,
     "blacklist": None,
 }
@@ -66,6 +67,7 @@ class Config:
 
         self.openmetrics_enable = _convert_bool(values["openmetrics_enable"])
         self.openmetrics_port = int(values["openmetrics_port"])
+        self.openmetrics_token = values["openmetrics_token"] or None
 
         self.whitelist = values["whitelist"]
         self.blacklist = values["blacklist"]

@@ -2,6 +2,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import threading
 import logging
 import copy
+import hmac
 
 
 class Metrics:
@@ -11,10 +12,12 @@ class Metrics:
 
         if config.openmetrics_enable:
             logging.info(
-                f"Starting openmetrics endpoint at port {config.openmetrics_port}")
+                f"Starting openmetrics endpoint at port {config.openmetrics_port}"
+                + (" (token authentication enabled)" if config.openmetrics_token else ""))
             daemon = threading.Thread(name='daemon_server',
                                       target=self._start_http_server,
-                                      args=(config.openmetrics_port,))
+                                      args=(config.openmetrics_port,
+                                            config.openmetrics_token))
 
             # Set as a daemon so it will be killed once the main thread is dead.
             daemon.setDaemon(True)
@@ -70,11 +73,29 @@ class Metrics:
     def flush_metrics(self):
         self._live_metrics = copy.deepcopy(self._metrics)
 
-    def _start_http_server(self, port):
+    def _start_http_server(self, port, token=None):
         metrics = self
 
         class RequestHandler(BaseHTTPRequestHandler):
+            def _is_authorized(self):
+                if not token:
+                    return True
+                header = self.headers.get("Authorization", "")
+                scheme, _, provided = header.partition(" ")
+                if scheme.lower() != "bearer":
+                    return False
+                return hmac.compare_digest(
+                    provided.strip().encode("utf8"), token.encode("utf8"))
+
             def do_GET(self):
+                if not self._is_authorized():
+                    self.protocol_version = "HTTP/1.1"
+                    self.send_response(401)
+                    self.send_header("WWW-Authenticate", 'Bearer')
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+
                 message = ""
                 for metric in metrics._live_metrics.items():
                     message += f"# HELP {metric[0]} {metric[1]['help']}\n# TYPE {metric[0]} {metric[1]['type']}\n"

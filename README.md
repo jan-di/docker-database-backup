@@ -36,6 +36,7 @@ Configure the backup service by specifying environment variables:
 | `HEALTHCHECKS_IO_URL` | (none) | Base Url for [Healthchecks.io](https://healthchecks.io) integration |
 | `OPENMETRICS_ENABLE` | `false` | Enable openmetrics http endpoint |
 | `OPENMETRICS_PORT` | `9639` | Port of openmetrics http endpoint |
+| `OPENMETRICS_TOKEN` | (none) | If set, the openmetrics endpoint requires the header `Authorization: Bearer <token>`. Requests without a valid token get a `401` response. |
 | `WHITELIST` | (none) | A comma-separated list of container names. If defined, only containers that appear in the list will be processed. Example: `app-db, database2`. |
 | `BLACKLIST` | (none) | A comma-separated list of container names. If defined, only containers that NOT appear in the list will be processed. Example: `app-db`. |
 | `DEBUG` | `false` | More verbose output for debugging |
