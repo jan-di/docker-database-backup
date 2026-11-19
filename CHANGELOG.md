@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Docker connection is no longer limited to the unix socket. TCP and TLS connections can be configured with the upstream environment variables (`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`)
+- Update python dependencies, including croniter 7 and python-dateutil 4
 
 ## [1.4.0] - 2026-11-08
 

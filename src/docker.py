@@ -1,4 +1,5 @@
 import logging
+import os
 import docker
 import base64
 from src import settings
@@ -10,13 +11,13 @@ class Docker:
 
         # Uses the upstream env vars (DOCKER_HOST, DOCKER_TLS_VERIFY, DOCKER_CERT_PATH, ...).
         # Defaults to the unix socket at /var/run/docker.sock.
-        self._client = docker.from_env()
-
         try:
+            self._client = docker.from_env()
             self._client.ping()
         except docker.errors.DockerException as e:
+            host = os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock")
             raise RuntimeError(
-                f"Cannot connect to the Docker daemon at {self._client.api.base_url}: {e}"
+                f"Cannot connect to the Docker daemon at {host}: {e}"
             ) from e
 
         logging.debug(f"Instance ID: {config.instance_id}")

@@ -4,21 +4,23 @@
 #
 #    pip-compile requirements.in
 #
-annotated-doc==0.0.5
+annotated-doc==0.0.7
     # via typer
+annotated-types==0.8.0
+    # via pydantic
 certifi==2026.10.23
     # via requests
 cffi==2.1.1
     # via cryptography
 charset-normalizer==3.5.2
     # via requests
-croniter==6.2.4
+croniter==7.0.0
     # via -r requirements.in
 cryptography==50.0.2
     # via pyaescrypt
 docker==7.2.0
     # via -r requirements.in
-humanize==4.16.0
+humanize==4.17.0
     # via -r requirements.in
 idna==3.20
     # via requests
@@ -34,7 +36,7 @@ jaraco-functools==4.6.0
     #   tempora
 jaraco-text==4.3.0
     # via jaraco-collections
-markdown-it-py==4.2.0
+markdown-it-py==4.3.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
@@ -46,9 +48,13 @@ pyaescrypt==6.1.1
     # via -r requirements.in
 pycparser==3.12
     # via cffi
+pydantic==2.14.4
+    # via typer
+pydantic-core==2.50.5
+    # via pydantic
 pygments==2.21.0
     # via rich
-python-dateutil==3.0.0
+python-dateutil==4.0.0
     # via
     #   croniter
     #   tempora
@@ -60,16 +66,20 @@ rich==15.0.0
     # via typer
 shellingham==1.5.4
     # via typer
-six==1.17.0
-    # via python-dateutil
 tempora==5.13.0
     # via -r requirements.in
-typer==0.27.3
+typer==0.29.2
     # via typer-slim
 typer-slim==0.24.0
     # via jaraco-text
 typing-extensions==4.16.0
-    # via tempora
+    # via
+    #   pydantic
+    #   pydantic-core
+    #   tempora
+    #   typing-inspection
+typing-inspection==0.4.5
+    # via pydantic
 tzdata==2026.6
     # via python-dateutil
 urllib3==2.8.0
