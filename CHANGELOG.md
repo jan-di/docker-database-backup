@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Docker connection is no longer limited to the unix socket. TCP and TLS connections can be configured with the upstream environment variables (`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, `DOCKER_CERT_PATH`)
+
 ## [1.4.0] - 2026-11-08
 
 ### Added

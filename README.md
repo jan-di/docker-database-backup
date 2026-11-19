@@ -44,6 +44,8 @@ Configure the backup service by specifying environment variables:
 | `DOCKER_TARGET_NAME` | `database-backup-target` | Prefix for the name of the internal hostname, that is used to connect to the database containers. |
 | `INSTANCE_ID` | `default` | Unique ID of each backup service instance. Must only be specified if more than one instance should be run on the same docker engine. If you change the value of `INSTANCE_ID`, the backup service container also needs a label `jan-di.database-backup.instance_id` with the same value, to allow it to find itself via the docker API. |
 
+By default the Docker daemon is reached via the unix socket `/var/run/docker.sock`. To use TCP or TLS instead, set the standard Docker client variables `DOCKER_HOST` (e.g. `tcp://host:2376`), `DOCKER_TLS_VERIFY` and `DOCKER_CERT_PATH` (directory containing `ca.pem`, `cert.pem` and `key.pem`).
+
 You can also define global default values for all container specific labels. Do this by prepending the label name by `GLOBAL_`. For example, to provide a default username, you can set a default value for `jan-di.database-backup.username` by specifying the environment variable `GLOBAL_USERNAME` (Attention, the environmental varibals must be written in capital letters!). See next chapter for reference.
 
 ## Database Configuration

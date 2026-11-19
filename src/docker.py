@@ -1,22 +1,23 @@
 import logging
-import os
 import docker
 import base64
 from src import settings
 
 
 class Docker:
-    _DOCKER_SOCK = "/var/run/docker.sock"
-
     def __init__(self, config):
         self._config = config
 
-        if not os.path.exists(self._DOCKER_SOCK):
-            raise RuntimeError(
-                f"Docker Socket not found. Socket file must be created at {self._DOCKER_SOCK}"
-            )
-
+        # Uses the upstream env vars (DOCKER_HOST, DOCKER_TLS_VERIFY, DOCKER_CERT_PATH, ...).
+        # Defaults to the unix socket at /var/run/docker.sock.
         self._client = docker.from_env()
+
+        try:
+            self._client.ping()
+        except docker.errors.DockerException as e:
+            raise RuntimeError(
+                f"Cannot connect to the Docker daemon at {self._client.api.base_url}: {e}"
+            ) from e
 
         logging.debug(f"Instance ID: {config.instance_id}")
 
