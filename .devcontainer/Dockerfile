@@ -8,7 +8,7 @@ RUN set -eu; \
     sh -c 'echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release --codename --short)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends mariadb-client postgresql-client-18 zstd
+    && apt-get -y install --no-install-recommends mariadb-client postgresql-client-19 zstd
 RUN pip install pip-tools
 
 LABEL jan-di.database-backup.instance_id="devcontainer"

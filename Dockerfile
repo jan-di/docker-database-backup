@@ -16,7 +16,7 @@ RUN set -eux; \
     echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list; \
     apt-get update; \
     apt-get upgrade -y; \
-    apt-get install -y --no-install-recommends mariadb-client postgresql-client-18 tzdata zstd; \
+    apt-get install -y --no-install-recommends mariadb-client postgresql-client-19 tzdata zstd; \
     apt-get purge -y --auto-remove wget; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*; \

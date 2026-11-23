@@ -11,6 +11,10 @@ services:
   # All currently supported major versions. See https://endoflife.date/postgresql
   # Specify tag as major
 
+  docker-database-backup-postgres-19:
+    <<: *x-postgres
+    image: docker.io/postgres:19
+
   docker-database-backup-postgres-18:
     <<: *x-postgres
     image: docker.io/postgres:18
